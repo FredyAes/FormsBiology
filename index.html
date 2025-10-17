@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biología – Segundo Parcial Trimestre I</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --secondary: #3b82f6;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --bg-light: #f0fdf4;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --border: #d1d5db;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            background: var(--bg-light);
+            padding: 20px 40px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            min-width: 120px;
+        }
+
+        .progress {
+            flex: 1;
+            height: 12px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            font-weight: 600;
+            color: var(--primary-dark);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .form-content {
+            padding: 40px;
+        }
+
+        .student-info {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .student-info h2 {
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .question-card {
+            background: var(--white);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .question-header {
+            display: flex;
+            align-items: start;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 1.1em;
+        }
+
+        .question-title {
+            flex: 1;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1.05em;
+        }
+
+        .question-points {
+            background: var(--warning);
+            color: var(--white);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .option-label:hover {
+            border-color: var(--primary);
+            background: var(--bg-light);
+            transform: translateX(5px);
+        }
+
+        .option-label input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .option-label input[type="radio"]:checked + span {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .option-label.selected {
+            border-color: var(--primary);
+            background: var(--bg-light);
+        }
+
+        .text-answer {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .text-answer:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .submit-section {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 2px solid var(--border);
+            margin-top: 20px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white);
+            padding: 15px 50px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .results-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .results-modal.show {
+            display: flex;
+        }
+
+        .results-content {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .results-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .results-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .results-details {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .close-btn {
+            background: var(--text-light);
+            color: var(--white);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.6em;
+            }
+
+            .form-content {
+                padding: 20px;
+            }
+
+            .progress-bar {
+                padding: 15px 20px;
+            }
+
+            .progress-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .progress-label,
+            .progress-text {
+                text-align: left;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+
+            .option-label:hover {
+                transform: none;
+            }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert.show {
+            display: flex;
+        }
+
+        .alert.warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="icon">🧬</div>
+            <h1>Biología – Segundo Parcial</h1>
+            <p>Trimestre I</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-container">
+                <span class="progress-label">Progreso:</span>
+                <div class="progress">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <span class="progress-text" id="progressText">0%</span>
+            </div>
+        </div>
+
+        <div class="form-content">
+            <div class="alert warning" id="alertBox">
+                <span>⚠️</span>
+                <span>Por favor, completa todos los campos antes de enviar.</span>
+            </div>
+
+            <form id="examForm">
+                <div class="student-info">
+                    <h2>📋 Información del Alumno</h2>
+                    <div class="form-group">
+                        <label for="studentName">Nombre completo:</label>
+                        <input type="text" id="studentName" name="studentName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="group">Grupo:</label>
+                        <input type="text" id="group" name="group" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="listNumber">Número de lista:</label>
+                        <input type="text" id="listNumber" name="listNumber" required>
+                    </div>
+                </div>
+
+                <div id="questionsContainer"></div>
+
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn">📤 Enviar Examen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="results-modal" id="resultsModal">
+        <div class="results-content">
+            <div class="results-header">
+                <div class="results-icon" id="resultsIcon">🎉</div>
+                <h2>¡Examen Completado!</h2>
+                <div class="results-score" id="resultsScore">0/100</div>
+            </div>
+            <div class="results-details" id="resultsDetails"></div>
+            <button class="close-btn" onclick="closeResults()">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: 'multiple_choice',
+                title: 'Es la unidad de vida más pequeña que existe.',
+                options: ['Célula', 'Cloroplastos', 'Mitocondria', 'Átomo'],
+                correct: 'Célula',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Son organismos que cuentan con una sola célula.',
+                options: ['Unicelulares', 'Pluricelulares', 'Mitocondria', 'Productores'],
+                correct: 'Unicelulares',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Son organismos que están formados por numerosas células.',
+                options: ['Pluricelulares', 'Unicelulares', 'Mitocondria', 'Productores'],
+                correct: 'Pluricelulares',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Es el material especializado con instrucciones sobre su funcionamiento general y cómo transmitir a sus descendientes las mismas características.',
+                options: ['Material inerte', 'Material genético', 'Molécula', 'Abióticos'],
+                correct: 'Material genético',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Son las células que tienen el material genético encerrado en una membrana bien estructurada y definida.',
+                options: ['Célula Procariota', 'Célula Eucariota', 'Animal', 'Vegetal'],
+                correct: 'Célula Eucariota',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Son las células que tienen el material genético reunido en el citoplasma sin una membrana.',
+                options: ['Célula eucariota', 'Célula Procariota', 'Animal', 'Vegetal'],
+                correct: 'Célula Procariota',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Tienen estructuras de color verde y gracias a ellas se da la fotosíntesis.',
+                options: ['Célula', 'Cloroplastos', 'Mitocondria', 'Átomo'],
+                correct: 'Cloroplastos',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Organelo encargado de la respiración celular que libera energía contenida en los nutrientes.',
+                options: ['Célula', 'Cloroplastos', 'Mitocondria', 'Átomo'],
+                correct: 'Mitocondria',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Son las partes que componen a las células eucariotas excepto…',
+                options: ['Núcleo', 'Mitocondria', 'Flagelo', 'Cloroplastos'],
+                correct: 'Flagelo',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Son células que pueden realizar la fotosíntesis.',
+                options: ['Mitocondria', 'Célula Procariota', 'Célula vegetal', 'Célula animal'],
+                correct: 'Célula vegetal',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Las bacterias son organismos pluricelulares',
+                options: ['Verdadero', 'Falso'],
+                correct: 'Falso',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'El ser humano es un organismo unicelular',
+                options: ['Verdadero', 'Falso'],
+                correct: 'Falso',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'La ardilla y el gato están compuestos por numerosas células',
+                options: ['Verdadero', 'Falso'],
+                correct: 'Verdadero',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Las plantas producen oxígeno mediante el proceso de la fotosíntesis',
+                options: ['Verdadero', 'Falso'],
+                correct: 'Verdadero',
+                points: 5
+            },
+            {
+                type: 'multiple_choice',
+                title: 'Los seres vivos no están compuestos por células',
+                options: ['Verdadero', 'Falso'],
+                correct: 'Falso',
+                points: 5
+            },
+            {
+                type: 'text',
+                title: 'Son células bien definidas y estructuradas que carecen de pared celular y cloroplastos',
+                correct: 'Célula animal',
+                points: 5
+            },
+            {
+                type: 'text',
+                title: 'Las amibas y los microorganismos son ejemplo de',
+                correct: 'Organismos unicelulares',
+                points: 5
+            },
+            {
+                type: 'text',
+                title: 'Organismos que poseen células de la sangre, de la piel, musculares, etc. son ejemplo de',
+                correct: 'Organismos pluricelulares',
+                points: 5
+            },
+            {
+                type: 'text',
+                title: 'Emplean la luz solar para producir la fotosíntesis',
+                correct: 'Célula vegetal',
+                points: 5
+            },
+            {
+                type: 'text',
+                title: 'Las plantas, los animales, microorganismos, hongos, etc., forman parte de los factores',
+                correct: 'Bióticos',
+                points: 5
+            }
+        ];
+
+        const container = document.getElementById('questionsContainer');
+        
+        questions.forEach((q, index) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            
+            let optionsHTML = '';
+            if (q.type === 'multiple_choice') {
+                optionsHTML = '<div class="options">';
+                q.options.forEach(opt => {
+                    optionsHTML += `
+                        <label class="option-label">
+                            <input type="radio" name="q${index}" value="${opt}" onchange="updateProgress()">
+                            <span>${opt}</span>
+                        </label>
+                    `;
+                });
+                optionsHTML += '</div>';
+            } else {
+                optionsHTML = `<textarea class="text-answer" name="q${index}" placeholder="Escribe tu respuesta aquí..." oninput="updateProgress()"></textarea>`;
+            }
+            
+            card.innerHTML = `
+                <div class="question-header">
+                    <div class="question-number">${index + 1}</div>
+                    <div class="question-title">${q.title}</div>
+                    <div class="question-points">${q.points} pts</div>
+                </div>
+                ${optionsHTML}
+            `;
+            
+            container.appendChild(card);
+        });
+
+        document.querySelectorAll('.option-label').forEach(label => {
+            label.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                const name = radio.name;
+                document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                    r.closest('.option-label').classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+
+        function updateProgress() {
+            const form = document.getElementById('examForm');
+            const totalFields = 3 + questions.length;
+            let completed = 0;
+            
+            if (form.studentName.value) completed++;
+            if (form.group.value) completed++;
+            if (form.listNumber.value) completed++;
+            
+            questions.forEach((q, index) => {
+                if (q.type === 'multiple_choice') {
+                    const selected = form.querySelector(`input[name="q${index}"]:checked`);
+                    if (selected) completed++;
+                } else {
+                    const answer = form.querySelector(`textarea[name="q${index}"]`).value.trim();
+                    if (answer) completed++;
+                }
+            });
+            
+            const percentage = Math.round((completed / totalFields) * 100);
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = percentage + '%';
+        }
+
+        document.getElementById('examForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const studentName = form.studentName.value.trim();
+            const group = form.group.value.trim();
+            const listNumber = form.listNumber.value.trim();
+            
+            if (!studentName || !group || !listNumber) {
+                showAlert();
+                return;
+            }
+            
+            let allAnswered = true;
+            questions.forEach((q, index) => {
+                if (q.type === 'multiple_choice') {
+                    const selected = form.querySelector(`input[name="q${index}"]:checked`);
+                    if (!selected) allAnswered = false;
+                } else {
+                    const answer = form.querySelector(`textarea[name="q${index}"]`).value.trim();
+                    if (!answer) allAnswered = false;
+                }
+            });
+            
+            if (!allAnswered) {
+                showAlert();
+                return;
+            }
+            
+            calculateResults();
+        });
+
+        function showAlert() {
+            const alert = document.getElementById('alertBox');
+            alert.classList.add('show');
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 4000);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function calculateResults() {
+            const form = document.getElementById('examForm');
+            let score = 0;
+            let correct = 0;
+            let incorrect = 0;
+            
+            questions.forEach((q, index) => {
+                let userAnswer;
+                if (q.type === 'multiple_choice') {
+                    const selected = form.querySelector(`input[name="q${index}"]:checked`);
+                    userAnswer = selected ? selected.value : '';
+                } else {
+                    userAnswer = form.querySelector(`textarea[name="q${index}"]`).value.trim();
+                }
+                
+                const isCorrect = userAnswer.toLowerCase() === q.correct.toLowerCase();
+                if (isCorrect) {
+                    score += q.points;
+                    correct++;
+                } else {
+                    incorrect++;
+                }
+            });
+            
+            showResults(score, correct, incorrect);
+        }
+
+        function showResults(score, correct, incorrect) {
+            const modal = document.getElementById('resultsModal');
+            const icon = document.getElementById('resultsIcon');
+            const scoreEl = document.getElementById('resultsScore');
+            const detailsEl = document.getElementById('resultsDetails');
+            
+            scoreEl.textContent = score + '/100';
+            
+            if (score >= 90) {
+                icon.textContent = '🏆';
+            } else if (score >= 70) {
+                icon.textContent = '🎉';
+            } else if (score >= 60) {
+                icon.textContent = '👍';
+            } else {
+                icon.textContent = '📚';
+            }
+            
+            detailsEl.innerHTML = `
+                <div class="detail-row">
+                    <strong>Calificación:</strong>
+                    <span>${score} puntos</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Respuestas correctas:</strong>
+                    <span style="color: var(--success)">✓ ${correct}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Respuestas incorrectas:</strong>
+                    <span style="color: var(--danger)">✗ ${incorrect}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Total de preguntas:</strong>
+                    <span>${questions.length}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Porcentaje:</strong>
+                    <span>${score}%</span>
+                </div>
+            `;
+            
+            modal.classList.add('show');
+        }
+
+        function closeResults() {
+            document.getElementById('resultsModal').classList.remove('show');
+        }
+
+        document.getElementById('studentName').addEventListener('input', updateProgress);
+        document.getElementById('group').addEventListener('input', updateProgress);
+        document.getElementById('listNumber').addEventListener('input', updateProgress);
+    </script>
+</body>
+</html>
