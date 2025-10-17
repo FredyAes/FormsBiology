@@ -323,13 +323,18 @@
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
 
-        .submit-btn:hover {
+        .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
         }
 
         .submit-btn:active {
             transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .results-modal {
@@ -467,6 +472,26 @@
             color: #92400e;
             border-left: 4px solid var(--warning);
         }
+
+        .alert.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -493,6 +518,11 @@
                 <span>Por favor, completa todos los campos antes de enviar.</span>
             </div>
 
+            <div class="alert info" id="sendingAlert">
+                <span class="spinner"></span>
+                <span>Enviando respuestas a Google Sheets...</span>
+            </div>
+
             <form id="examForm">
                 <div class="student-info">
                     <h2>📋 Información del Alumno</h2>
@@ -513,7 +543,7 @@
                 <div id="questionsContainer"></div>
 
                 <div class="submit-section">
-                    <button type="submit" class="submit-btn">📤 Enviar Examen</button>
+                    <button type="submit" class="submit-btn" id="submitBtn">📤 Enviar Examen</button>
                 </div>
             </form>
         </div>
@@ -532,6 +562,9 @@
     </div>
 
     <script>
+        // ⚠️ IMPORTANTE: Reemplaza esta URL con la URL de tu Google Apps Script
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwKf6QD4nCHbVQp2jWTNt6ZEiSl3N3jxpjJOKcSn98q7pYQcBXK9XWxSXu77EtLIyqi/exec';
+
         const questions = [
             {
                 type: 'multiple_choice',
@@ -739,7 +772,7 @@
             document.getElementById('progressText').textContent = percentage + '%';
         }
 
-        document.getElementById('examForm').addEventListener('submit', function(e) {
+        document.getElementById('examForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const form = this;
@@ -748,7 +781,7 @@
             const listNumber = form.listNumber.value.trim();
             
             if (!studentName || !group || !listNumber) {
-                showAlert();
+                showAlert('warning', 'Por favor, completa todos los campos antes de enviar.');
                 return;
             }
             
@@ -764,19 +797,91 @@
             });
             
             if (!allAnswered) {
-                showAlert();
+                showAlert('warning', 'Por favor, responde todas las preguntas antes de enviar.');
                 return;
             }
             
-            calculateResults();
+            // Calcular resultados
+            const results = calculateResults();
+            
+            // Preparar datos para enviar a Google Sheets
+            const dataToSend = {
+                timestamp: new Date().toLocaleString('es-MX'),
+                studentName: studentName,
+                group: group,
+                listNumber: listNumber,
+                score: results.score,
+                correct: results.correct,
+                incorrect: results.incorrect,
+                percentage: results.score,
+                answers: []
+            };
+            
+            // Agregar todas las respuestas
+            questions.forEach((q, index) => {
+                let userAnswer;
+                if (q.type === 'multiple_choice') {
+                    const selected = form.querySelector(`input[name="q${index}"]:checked`);
+                    userAnswer = selected ? selected.value : '';
+                } else {
+                    userAnswer = form.querySelector(`textarea[name="q${index}"]`).value.trim();
+                }
+                
+                dataToSend.answers.push({
+                    question: q.title,
+                    userAnswer: userAnswer,
+                    correctAnswer: q.correct,
+                    isCorrect: userAnswer.toLowerCase() === q.correct.toLowerCase(),
+                    points: q.points
+                });
+            });
+            
+            // Enviar a Google Sheets
+            await sendToGoogleSheets(dataToSend);
+            
+            // Mostrar resultados
+            showResults(results.score, results.correct, results.incorrect);
         });
 
-        function showAlert() {
+        async function sendToGoogleSheets(data) {
+            const submitBtn = document.getElementById('submitBtn');
+            const sendingAlert = document.getElementById('sendingAlert');
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner"></span> Enviando...';
+                sendingAlert.classList.add('show');
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                console.log('Datos enviados exitosamente a Google Sheets');
+                
+            } catch (error) {
+                console.error('Error al enviar datos:', error);
+                alert('Hubo un problema al guardar tus respuestas, pero tu calificación se mostrará de todos modos.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '📤 Enviar Examen';
+                sendingAlert.classList.remove('show');
+            }
+        }
+
+        function showAlert(type, message) {
             const alert = document.getElementById('alertBox');
-            alert.classList.add('show');
+            alert.className = `alert ${type} show`;
+            alert.querySelector('span:last-child').textContent = message;
+            
             setTimeout(() => {
                 alert.classList.remove('show');
             }, 4000);
+            
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -804,7 +909,7 @@
                 }
             });
             
-            showResults(score, correct, incorrect);
+            return { score, correct, incorrect };
         }
 
         function showResults(score, correct, incorrect) {
@@ -845,6 +950,10 @@
                 <div class="detail-row">
                     <strong>Porcentaje:</strong>
                     <span>${score}%</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Estado:</strong>
+                    <span style="color: var(--success)">✓ Guardado en Google Sheets</span>
                 </div>
             `;
             
