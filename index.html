@@ -86,6 +86,65 @@
             margin-bottom: 15px;
         }
 
+        .access-denied {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .access-denied-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .access-denied h2 {
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .access-denied p {
+            color: var(--text-light);
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .countdown {
+            background: var(--bg-light);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            display: inline-block;
+        }
+
+        .countdown-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .countdown-timer {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .countdown-item {
+            text-align: center;
+        }
+
+        .countdown-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--primary);
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 0.9em;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+
         .progress-bar {
             background: var(--bg-light);
             padding: 20px 40px;
@@ -177,19 +236,27 @@
             font-size: 0.95em;
         }
 
-        .form-group input[type="text"] {
+        .form-group input[type="text"],
+        .form-group select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid var(--border);
             border-radius: 8px;
             font-size: 1em;
             transition: all 0.3s ease;
+            font-family: inherit;
         }
 
-        .form-group input[type="text"]:focus {
+        .form-group input[type="text"]:focus,
+        .form-group select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-group select {
+            cursor: pointer;
+            background: var(--white);
         }
 
         .question-card {
@@ -452,6 +519,15 @@
             .option-label:hover {
                 transform: none;
             }
+
+            .countdown-timer {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .countdown-value {
+                font-size: 2em;
+            }
         }
 
         .alert {
@@ -492,60 +568,105 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .time-warning {
+            background: #fee2e2;
+            border: 2px solid var(--danger);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #991b1b;
+        }
+
+        .time-remaining {
+            font-weight: 600;
+            color: var(--danger);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="mainContainer">
         <div class="header">
             <div class="icon">🧬</div>
             <h1>Biología – Segundo Parcial</h1>
             <p>Trimestre I</p>
         </div>
 
-        <div class="progress-bar">
-            <div class="progress-container">
-                <span class="progress-label">Progreso:</span>
-                <div class="progress">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <span class="progress-text" id="progressText">0%</span>
+        <div class="access-denied" id="accessDenied" style="display: none;">
+            <div class="access-denied-icon">🔒</div>
+            <h2>Examen no disponible</h2>
+            <p><strong>El examen estará disponible:</strong></p>
+            <p>📅 31 de Octubre de 2025</p>
+            <p>⏰ 10:00 AM - 11:30 AM (Hora de Monterrey)</p>
+            
+            <div class="countdown">
+                <div class="countdown-title">Tiempo restante para iniciar:</div>
+                <div class="countdown-timer" id="countdownTimer"></div>
             </div>
         </div>
 
-        <div class="form-content">
-            <div class="alert warning" id="alertBox">
-                <span>⚠️</span>
-                <span>Por favor, completa todos los campos antes de enviar.</span>
+        <div id="examContent" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-container">
+                    <span class="progress-label">Progreso:</span>
+                    <div class="progress">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <span class="progress-text" id="progressText">0%</span>
+                </div>
             </div>
 
-            <div class="alert info" id="sendingAlert">
-                <span class="spinner"></span>
-                <span>Enviando respuestas a Google Sheets...</span>
+            <div class="form-content">
+                <div class="time-warning" id="timeWarning" style="display: none;">
+                    <span>⚠️</span>
+                    <span>Tiempo restante: <span class="time-remaining" id="timeRemaining"></span></span>
+                </div>
+
+                <div class="alert warning" id="alertBox">
+                    <span>⚠️</span>
+                    <span>Por favor, completa todos los campos antes de enviar.</span>
+                </div>
+
+                <div class="alert info" id="sendingAlert">
+                    <span class="spinner"></span>
+                    <span>Enviando respuestas a Google Sheets...</span>
+                </div>
+
+                <form id="examForm">
+                    <div class="student-info">
+                        <h2>📋 Información del Alumno</h2>
+                        <div class="form-group">
+                            <label for="studentName">Nombre completo:</label>
+                            <input type="text" id="studentName" name="studentName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="group">Grupo:</label>
+                            <select id="group" name="group" required>
+                                <option value="">Selecciona tu grupo</option>
+                                <option value="Grupo 4">Grupo 4</option>
+                                <option value="Grupo 5">Grupo 5</option>
+                                <option value="Grupo 6">Grupo 6</option>
+                                <option value="Grupo 7">Grupo 7</option>
+                                <option value="Grupo 8">Grupo 8</option>
+                                <option value="Grupo 9">Grupo 9</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="listNumber">Número de lista:</label>
+                            <input type="text" id="listNumber" name="listNumber" required>
+                        </div>
+                    </div>
+
+                    <div id="questionsContainer"></div>
+
+                    <div class="submit-section">
+                        <button type="submit" class="submit-btn" id="submitBtn">📤 Enviar Examen</button>
+                    </div>
+                </form>
             </div>
-
-            <form id="examForm">
-                <div class="student-info">
-                    <h2>📋 Información del Alumno</h2>
-                    <div class="form-group">
-                        <label for="studentName">Nombre completo:</label>
-                        <input type="text" id="studentName" name="studentName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="group">Grupo:</label>
-                        <input type="text" id="group" name="group" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="listNumber">Número de lista:</label>
-                        <input type="text" id="listNumber" name="listNumber" required>
-                    </div>
-                </div>
-
-                <div id="questionsContainer"></div>
-
-                <div class="submit-section">
-                    <button type="submit" class="submit-btn" id="submitBtn">📤 Enviar Examen</button>
-                </div>
-            </form>
         </div>
     </div>
 
@@ -562,8 +683,19 @@
     </div>
 
     <script>
-        // ⚠️ IMPORTANTE: Reemplaza esta URL con la URL de tu Google Apps Script
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwKf6QD4nCHbVQp2jWTNt6ZEiSl3N3jxpjJOKcSn98q7pYQcBXK9XWxSXu77EtLIyqi/exec';
+        // ⚠️ CONFIGURACIÓN: URLs de Google Apps Script para cada grupo
+        const GOOGLE_SCRIPT_URLS = {
+            'Grupo 4': 'https://script.google.com/macros/s/AKfycbyo3ZNu9MwA-YzTaQhRPfGxnlILnDpVU4uoNLr_1Fa3WmJ42aCltK-8VLTIVkY0jHZc3Q/exec',
+            'Grupo 5': 'https://script.google.com/macros/s/AKfycbxFXiWr-hB5FzQKf3-jjNCod8CoZN2116wWLxuvLFgZ5NEAeRCmOElxjspDgBIAfqni/exec',
+            'Grupo 6': 'https://script.google.com/macros/s/AKfycbyJukkYpaMPdNbkrUTeYCwS_OpVdZwM1AXd72OkyrOa26alk73VVtNnRU9Vl2RENEy4/exec',
+            'Grupo 7': 'https://script.google.com/macros/s/AKfycbwF1MYJoEsmNgLYQ12QM7vqHTkZQpu9grGWaJlkwdzqlJgdZWYDsKP34mV4QJ_MfKLCMA/exec',
+            'Grupo 8': 'https://script.google.com/macros/s/AKfycbyPUV2pF0anV-WwJ5asm-CC2k_wT4U8zWKT6mm9nSIH6XZfHyqPblvJSMJOQA7YdfHZ/exec',
+            'Grupo 9': 'https://script.google.com/macros/s/AKfycbytXZqPhZ4hQe8Y492RARBjIxCe0zJxzc2jRMARQgNwmoS-0KwJskI7EUbVmqFqPe4r/exec'
+        };
+
+        // Configuración de fecha y hora (Zona horaria de Monterrey: America/Monterrey = UTC-6)
+        const EXAM_START = new Date('2025-10-31T10:00:00-06:00'); // 10:00 AM
+        const EXAM_END = new Date('2025-10-31T11:30:00-06:00');   // 11:30 AM
 
         const questions = [
             {
@@ -703,50 +835,149 @@
             }
         ];
 
-        const container = document.getElementById('questionsContainer');
-        
-        questions.forEach((q, index) => {
-            const card = document.createElement('div');
-            card.className = 'question-card';
+        // Verificar acceso al examen
+        function checkExamAccess() {
+            const now = new Date();
             
-            let optionsHTML = '';
-            if (q.type === 'multiple_choice') {
-                optionsHTML = '<div class="options">';
-                q.options.forEach(opt => {
-                    optionsHTML += `
-                        <label class="option-label">
-                            <input type="radio" name="q${index}" value="${opt}" onchange="updateProgress()">
-                            <span>${opt}</span>
-                        </label>
-                    `;
-                });
-                optionsHTML += '</div>';
+            if (now < EXAM_START) {
+                // Antes del examen
+                document.getElementById('accessDenied').style.display = 'block';
+                document.getElementById('examContent').style.display = 'none';
+                startCountdown();
+                return false;
+            } else if (now > EXAM_END) {
+                // Después del examen
+                document.getElementById('accessDenied').style.display = 'block';
+                document.getElementById('examContent').style.display = 'none';
+                document.querySelector('.access-denied h2').textContent = 'Examen finalizado';
+                document.querySelector('.access-denied p:nth-child(3)').textContent = 'El tiempo para realizar el examen ha terminado.';
+                document.querySelector('.countdown').style.display = 'none';
+                return false;
             } else {
-                optionsHTML = `<textarea class="text-answer" name="q${index}" placeholder="Escribe tu respuesta aquí..." oninput="updateProgress()"></textarea>`;
+                // Durante el examen
+                document.getElementById('accessDenied').style.display = 'none';
+                document.getElementById('examContent').style.display = 'block';
+                startExamTimer();
+                initializeQuestions();
+                return true;
+            }
+        }
+
+        // Contador regresivo antes del examen
+        function startCountdown() {
+            const countdownTimer = document.getElementById('countdownTimer');
+            
+            function updateCountdown() {
+                const now = new Date();
+                const diff = EXAM_START - now;
+                
+                if (diff <= 0) {
+                    location.reload();
+                    return;
+                }
+                
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                countdownTimer.innerHTML = `
+                    ${days > 0 ? `<div class="countdown-item"><span class="countdown-value">${days}</span><span class="countdown-label">Días</span></div>` : ''}
+                    <div class="countdown-item"><span class="countdown-value">${hours}</span><span class="countdown-label">Horas</span></div>
+                    <div class="countdown-item"><span class="countdown-value">${minutes}</span><span class="countdown-label">Minutos</span></div>
+                    <div class="countdown-item"><span class="countdown-value">${seconds}</span><span class="countdown-label">Segundos</span></div>
+                `;
             }
             
-            card.innerHTML = `
-                <div class="question-header">
-                    <div class="question-number">${index + 1}</div>
-                    <div class="question-title">${q.title}</div>
-                    <div class="question-points">${q.points} pts</div>
-                </div>
-                ${optionsHTML}
-            `;
-            
-            container.appendChild(card);
-        });
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
 
-        document.querySelectorAll('.option-label').forEach(label => {
-            label.addEventListener('click', function() {
-                const radio = this.querySelector('input[type="radio"]');
-                const name = radio.name;
-                document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
-                    r.closest('.option-label').classList.remove('selected');
-                });
-                this.classList.add('selected');
+        // Temporizador durante el examen
+        function startExamTimer() {
+            const timeWarning = document.getElementById('timeWarning');
+            const timeRemainingEl = document.getElementById('timeRemaining');
+            
+            timeWarning.style.display = 'flex';
+            
+            function updateTimer() {
+                const now = new Date();
+                const diff = EXAM_END - now;
+                
+                if (diff <= 0) {
+                    alert('El tiempo del examen ha terminado. La página se recargará.');
+                    location.reload();
+                    return;
+                }
+                
+                const minutes = Math.floor(diff / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                timeRemainingEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Cambiar color si quedan menos de 10 minutos
+                if (minutes < 10) {
+                    timeWarning.style.background = '#fee2e2';
+                    timeWarning.style.borderColor = '#ef4444';
+                }
+            }
+            
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        // Inicializar preguntas
+        function initializeQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                
+                let optionsHTML = '';
+                if (q.type === 'multiple_choice') {
+                    optionsHTML = '<div class="options">';
+                    q.options.forEach(opt => {
+                        optionsHTML += `
+                            <label class="option-label">
+                                <input type="radio" name="q${index}" value="${opt}" onchange="updateProgress()">
+                                <span>${opt}</span>
+                            </label>
+                        `;
+                    });
+                    optionsHTML += '</div>';
+                } else {
+                    optionsHTML = `<textarea class="text-answer" name="q${index}" placeholder="Escribe tu respuesta aquí..." oninput="updateProgress()"></textarea>`;
+                }
+                
+                card.innerHTML = `
+                    <div class="question-header">
+                        <div class="question-number">${index + 1}</div>
+                        <div class="question-title">${q.title}</div>
+                        <div class="question-points">${q.points} pts</div>
+                    </div>
+                    ${optionsHTML}
+                `;
+                
+                container.appendChild(card);
             });
-        });
+
+            document.querySelectorAll('.option-label').forEach(label => {
+                label.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    const name = radio.name;
+                    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+                        r.closest('.option-label').classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                });
+            });
+
+            document.getElementById('studentName').addEventListener('input', updateProgress);
+            document.getElementById('group').addEventListener('change', updateProgress);
+            document.getElementById('listNumber').addEventListener('input', updateProgress);
+        }
 
         function updateProgress() {
             const form = document.getElementById('examForm');
@@ -777,7 +1008,7 @@
             
             const form = this;
             const studentName = form.studentName.value.trim();
-            const group = form.group.value.trim();
+            const group = form.group.value;
             const listNumber = form.listNumber.value.trim();
             
             if (!studentName || !group || !listNumber) {
@@ -806,7 +1037,7 @@
             
             // Preparar datos para enviar a Google Sheets
             const dataToSend = {
-                timestamp: new Date().toLocaleString('es-MX'),
+                timestamp: new Date().toLocaleString('es-MX', { timeZone: 'America/Monterrey' }),
                 studentName: studentName,
                 group: group,
                 listNumber: listNumber,
@@ -836,23 +1067,32 @@
                 });
             });
             
-            // Enviar a Google Sheets
-            await sendToGoogleSheets(dataToSend);
+            // Enviar a Google Sheets del grupo correspondiente
+            await sendToGoogleSheets(dataToSend, group);
             
             // Mostrar resultados
             showResults(results.score, results.correct, results.incorrect);
         });
 
-        async function sendToGoogleSheets(data) {
+        async function sendToGoogleSheets(data, group) {
             const submitBtn = document.getElementById('submitBtn');
             const sendingAlert = document.getElementById('sendingAlert');
+            
+            // Obtener la URL correspondiente al grupo
+            const scriptURL = GOOGLE_SCRIPT_URLS[group];
+            
+            if (!scriptURL || scriptURL === `URL_${group.replace(' ', '_').toUpperCase()}_AQUI`) {
+                console.error('URL no configurada para el grupo:', group);
+                alert('Error: La URL de Google Sheets no está configurada para tu grupo. Contacta al profesor.');
+                return;
+            }
             
             try {
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner"></span> Enviando...';
                 sendingAlert.classList.add('show');
                 
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                const response = await fetch(scriptURL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: {
@@ -861,7 +1101,7 @@
                     body: JSON.stringify(data)
                 });
                 
-                console.log('Datos enviados exitosamente a Google Sheets');
+                console.log('Datos enviados exitosamente a Google Sheets del', group);
                 
             } catch (error) {
                 console.error('Error al enviar datos:', error);
@@ -964,9 +1204,8 @@
             document.getElementById('resultsModal').classList.remove('show');
         }
 
-        document.getElementById('studentName').addEventListener('input', updateProgress);
-        document.getElementById('group').addEventListener('input', updateProgress);
-        document.getElementById('listNumber').addEventListener('input', updateProgress);
+        // Inicializar al cargar la página
+        checkExamAccess();
     </script>
 </body>
 </html>
