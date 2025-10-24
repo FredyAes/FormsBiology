@@ -31,6 +31,7 @@
             min-height: 100vh;
             padding: 20px;
             line-height: 1.6;
+            touch-action: pan-y;
         }
 
         .container {
@@ -326,6 +327,13 @@
             cursor: pointer;
             transition: all 0.3s ease;
             background: var(--white);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-label:active {
+            transform: scale(0.98);
+            background: var(--bg-light);
         }
 
         .option-label:hover {
@@ -352,22 +360,101 @@
             background: var(--bg-light);
         }
 
-        .text-answer {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid var(--border);
+        /* Estilos para preguntas de arrastrar y soltar */
+        .drag-drop-container {
+            margin-top: 20px;
+        }
+
+        .word-bank {
+            background: #f3f4f6;
+            padding: 20px;
             border-radius: 10px;
-            font-size: 1em;
-            font-family: inherit;
-            transition: all 0.3s ease;
-            resize: vertical;
+            margin-bottom: 20px;
+            border: 2px dashed var(--border);
+        }
+
+        .word-bank-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .word-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
             min-height: 60px;
         }
 
-        .text-answer:focus {
-            outline: none;
+        .draggable-word {
+            background: linear-gradient(135deg, var(--secondary) 0%, #2563eb 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: move;
+            user-select: none;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .draggable-word:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .draggable-word:active {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5);
+            z-index: 1000;
+        }
+
+        .draggable-word.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg) scale(1.1);
+            cursor: grabbing;
+        }
+
+        .drop-zone {
+            border: 3px dashed var(--border);
+            background: var(--white);
+            padding: 15px;
+            border-radius: 10px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .drop-zone.empty::before {
+            content: '↓ Arrastra la respuesta aquí';
+            color: var(--text-light);
+            font-style: italic;
+            font-size: 0.9em;
+        }
+
+        .drop-zone.drag-over {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            background: var(--bg-light);
+            border-style: solid;
+            transform: scale(1.02);
+        }
+
+        .drop-zone.filled {
+            border-color: var(--success);
+            border-style: solid;
+        }
+
+        .drop-zone .draggable-word {
+            margin: 0;
         }
 
         .submit-section {
@@ -388,15 +475,16 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
         }
 
         .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
         }
 
         .submit-btn:disabled {
@@ -482,6 +570,10 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
             .container {
                 border-radius: 0;
             }
@@ -527,6 +619,11 @@
 
             .countdown-value {
                 font-size: 2em;
+            }
+
+            .draggable-word {
+                font-size: 0.9em;
+                padding: 8px 16px;
             }
         }
 
@@ -646,6 +743,9 @@
                             <label for="group">Grupo:</label>
                             <select id="group" name="group" required>
                                 <option value="">Selecciona tu grupo</option>
+                                <option value="Grupo 1">Grupo 1</option>
+                                <option value="Grupo 2">Grupo 2</option>
+                                <option value="Grupo 3">Grupo 3</option>
                                 <option value="Grupo 4">Grupo 4</option>
                                 <option value="Grupo 5">Grupo 5</option>
                                 <option value="Grupo 6">Grupo 6</option>
@@ -685,6 +785,9 @@
     <script>
         // ⚠️ CONFIGURACIÓN: URLs de Google Apps Script para cada grupo
         const GOOGLE_SCRIPT_URLS = {
+            'Grupo 1': 'https://script.google.com/macros/s/AKfycbyCRJhCgemyUH9eyLCsTKCyVxC1u5m61Znhd5Nz1SFdqZ5A8RJCgLXCYJfiJxGysYgLhg/exec',
+            'Grupo 2': 'https://script.google.com/macros/s/AKfycbyJFFx3Nxs86wVuURiMmWIPNLGEs8ijbIH9T_JB6NI8Lx2BboIiyEwalgmpgw9abxgTHg/exec',
+            'Grupo 3': 'https://script.google.com/macros/s/AKfycbz8jHL2RXsVS1zpG--zYZQ-WAmqOJqr101v2w427A7JsxCvMRbw9nEHhazNU-_Re4Hs/exec',
             'Grupo 4': 'https://script.google.com/macros/s/AKfycbyo3ZNu9MwA-YzTaQhRPfGxnlILnDpVU4uoNLr_1Fa3WmJ42aCltK-8VLTIVkY0jHZc3Q/exec',
             'Grupo 5': 'https://script.google.com/macros/s/AKfycbxFXiWr-hB5FzQKf3-jjNCod8CoZN2116wWLxuvLFgZ5NEAeRCmOElxjspDgBIAfqni/exec',
             'Grupo 6': 'https://script.google.com/macros/s/AKfycbyJukkYpaMPdNbkrUTeYCwS_OpVdZwM1AXd72OkyrOa26alk73VVtNnRU9Vl2RENEy4/exec',
@@ -694,7 +797,7 @@
         };
 
         // Configuración de fecha y hora (Zona horaria de Monterrey: America/Monterrey = UTC-6)
-        const EXAM_START = new Date('2025-10-31T10:00:00-06:00'); // 10:00 AM
+        const EXAM_START = new Date('2025-10-23T11:40:00-06:00'); // 10:00 AM
         const EXAM_END = new Date('2025-10-31T11:30:00-06:00');   // 11:30 AM
 
         const questions = [
@@ -804,49 +907,64 @@
                 points: 5
             },
             {
-                type: 'text',
+                type: 'drag_drop',
                 title: 'Son células bien definidas y estructuradas que carecen de pared celular y cloroplastos',
                 correct: 'Célula animal',
                 points: 5
             },
             {
-                type: 'text',
+                type: 'drag_drop',
                 title: 'Las amibas y los microorganismos son ejemplo de',
                 correct: 'Organismos unicelulares',
                 points: 5
             },
             {
-                type: 'text',
+                type: 'drag_drop',
                 title: 'Organismos que poseen células de la sangre, de la piel, musculares, etc. son ejemplo de',
                 correct: 'Organismos pluricelulares',
                 points: 5
             },
             {
-                type: 'text',
+                type: 'drag_drop',
                 title: 'Emplean la luz solar para producir la fotosíntesis',
                 correct: 'Célula vegetal',
                 points: 5
             },
             {
-                type: 'text',
+                type: 'drag_drop',
                 title: 'Las plantas, los animales, microorganismos, hongos, etc., forman parte de los factores',
                 correct: 'Bióticos',
                 points: 5
             }
         ];
 
+        // Banco de palabras para las preguntas de arrastrar y soltar
+        const wordBank = [
+            'Célula animal',
+            'Célula vegetal',
+            'Organismos unicelulares',
+            'Organismos pluricelulares',
+            'Bióticos',
+            'Abióticos',
+            'Fotosíntesis',
+            'Respiración celular'
+        ];
+
+        // Variables globales para drag and drop
+        let draggedElement = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
+
         // Verificar acceso al examen
         function checkExamAccess() {
             const now = new Date();
             
             if (now < EXAM_START) {
-                // Antes del examen
                 document.getElementById('accessDenied').style.display = 'block';
                 document.getElementById('examContent').style.display = 'none';
                 startCountdown();
                 return false;
             } else if (now > EXAM_END) {
-                // Después del examen
                 document.getElementById('accessDenied').style.display = 'block';
                 document.getElementById('examContent').style.display = 'none';
                 document.querySelector('.access-denied h2').textContent = 'Examen finalizado';
@@ -854,7 +972,6 @@
                 document.querySelector('.countdown').style.display = 'none';
                 return false;
             } else {
-                // Durante el examen
                 document.getElementById('accessDenied').style.display = 'none';
                 document.getElementById('examContent').style.display = 'block';
                 startExamTimer();
@@ -863,7 +980,6 @@
             }
         }
 
-        // Contador regresivo antes del examen
         function startCountdown() {
             const countdownTimer = document.getElementById('countdownTimer');
             
@@ -893,7 +1009,6 @@
             setInterval(updateCountdown, 1000);
         }
 
-        // Temporizador durante el examen
         function startExamTimer() {
             const timeWarning = document.getElementById('timeWarning');
             const timeRemainingEl = document.getElementById('timeRemaining');
@@ -915,7 +1030,6 @@
                 
                 timeRemainingEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
-                // Cambiar color si quedan menos de 10 minutos
                 if (minutes < 10) {
                     timeWarning.style.background = '#fee2e2';
                     timeWarning.style.borderColor = '#ef4444';
@@ -926,7 +1040,6 @@
             setInterval(updateTimer, 1000);
         }
 
-        // Inicializar preguntas
         function initializeQuestions() {
             const container = document.getElementById('questionsContainer');
             container.innerHTML = '';
@@ -947,8 +1060,18 @@
                         `;
                     });
                     optionsHTML += '</div>';
-                } else {
-                    optionsHTML = `<textarea class="text-answer" name="q${index}" placeholder="Escribe tu respuesta aquí..." oninput="updateProgress()"></textarea>`;
+                } else if (q.type === 'drag_drop') {
+                    optionsHTML = `
+                        <div class="drag-drop-container">
+                            ${index === 15 ? `
+                                <div class="word-bank">
+                                    <div class="word-bank-title">🎯 Banco de palabras (arrastra las respuestas)</div>
+                                    <div class="word-options" id="wordBank"></div>
+                                </div>
+                            ` : ''}
+                            <div class="drop-zone empty" data-question="${index}" id="dropzone-${index}"></div>
+                        </div>
+                    `;
                 }
                 
                 card.innerHTML = `
@@ -963,6 +1086,37 @@
                 container.appendChild(card);
             });
 
+            // Inicializar banco de palabras solo una vez
+            const wordBankContainer = document.getElementById('wordBank');
+            if (wordBankContainer) {
+                wordBank.forEach(word => {
+                    const wordEl = document.createElement('div');
+                    wordEl.className = 'draggable-word';
+                    wordEl.textContent = word;
+                    wordEl.draggable = true;
+                    wordEl.dataset.word = word;
+                    
+                    // Eventos para escritorio
+                    wordEl.addEventListener('dragstart', handleDragStart);
+                    wordEl.addEventListener('dragend', handleDragEnd);
+                    
+                    // Eventos para móvil
+                    wordEl.addEventListener('touchstart', handleTouchStart);
+                    wordEl.addEventListener('touchmove', handleTouchMove);
+                    wordEl.addEventListener('touchend', handleTouchEnd);
+                    
+                    wordBankContainer.appendChild(wordEl);
+                });
+            }
+
+            // Configurar zonas de soltar
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('dragleave', handleDragLeave);
+            });
+
+            // Configurar eventos para opciones múltiples
             document.querySelectorAll('.option-label').forEach(label => {
                 label.addEventListener('click', function() {
                     const radio = this.querySelector('input[type="radio"]');
@@ -979,6 +1133,151 @@
             document.getElementById('listNumber').addEventListener('input', updateProgress);
         }
 
+        // Funciones de Drag and Drop para escritorio
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            this.classList.add('drag-over');
+            return false;
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            e.preventDefault();
+            
+            this.classList.remove('drag-over');
+            
+            if (draggedElement) {
+                // Si la zona ya tiene una palabra, devolverla al banco
+                const existingWord = this.querySelector('.draggable-word');
+                if (existingWord) {
+                    const wordBank = document.getElementById('wordBank');
+                    wordBank.appendChild(existingWord);
+                }
+                
+                // Clonar el elemento arrastrado
+                const clone = draggedElement.cloneNode(true);
+                clone.draggable = true;
+                clone.addEventListener('dragstart', handleDragStart);
+                clone.addEventListener('dragend', handleDragEnd);
+                clone.addEventListener('touchstart', handleTouchStart);
+                clone.addEventListener('touchmove', handleTouchMove);
+                clone.addEventListener('touchend', handleTouchEnd);
+                clone.addEventListener('click', function() {
+                    // Devolver al banco al hacer clic
+                    const wordBank = document.getElementById('wordBank');
+                    wordBank.appendChild(this);
+                    this.parentElement.classList.add('empty');
+                    this.parentElement.classList.remove('filled');
+                    updateProgress();
+                });
+                
+                this.innerHTML = '';
+                this.appendChild(clone);
+                this.classList.remove('empty');
+                this.classList.add('filled');
+                
+                updateProgress();
+            }
+            
+            return false;
+        }
+
+        // Funciones de Touch para móvil
+        function handleTouchStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            
+            if (!draggedElement) return;
+            
+            const touch = e.touches[0];
+            const element = draggedElement;
+            
+            // Mover visualmente el elemento
+            element.style.position = 'fixed';
+            element.style.zIndex = '9999';
+            element.style.left = touch.clientX - 50 + 'px';
+            element.style.top = touch.clientY - 25 + 'px';
+        }
+
+        function handleTouchEnd(e) {
+            if (!draggedElement) return;
+            
+            const touch = e.changedTouches[0];
+            const element = draggedElement;
+            
+            // Resetear estilos
+            element.style.position = '';
+            element.style.zIndex = '';
+            element.style.left = '';
+            element.style.top = '';
+            element.classList.remove('dragging');
+            
+            // Encontrar la zona de soltar debajo del dedo
+            const dropZone = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.drop-zone');
+            
+            if (dropZone) {
+                // Si la zona ya tiene una palabra, devolverla al banco
+                const existingWord = dropZone.querySelector('.draggable-word');
+                if (existingWord) {
+                    const wordBank = document.getElementById('wordBank');
+                    wordBank.appendChild(existingWord);
+                }
+                
+                // Clonar el elemento
+                const clone = element.cloneNode(true);
+                clone.draggable = true;
+                clone.addEventListener('dragstart', handleDragStart);
+                clone.addEventListener('dragend', handleDragEnd);
+                clone.addEventListener('touchstart', handleTouchStart);
+                clone.addEventListener('touchmove', handleTouchMove);
+                clone.addEventListener('touchend', handleTouchEnd);
+                clone.addEventListener('click', function() {
+                    const wordBank = document.getElementById('wordBank');
+                    wordBank.appendChild(this);
+                    this.parentElement.classList.add('empty');
+                    this.parentElement.classList.remove('filled');
+                    updateProgress();
+                });
+                
+                dropZone.innerHTML = '';
+                dropZone.appendChild(clone);
+                dropZone.classList.remove('empty');
+                dropZone.classList.add('filled');
+                
+                updateProgress();
+            }
+            
+            draggedElement = null;
+        }
+
         function updateProgress() {
             const form = document.getElementById('examForm');
             const totalFields = 3 + questions.length;
@@ -992,9 +1291,9 @@
                 if (q.type === 'multiple_choice') {
                     const selected = form.querySelector(`input[name="q${index}"]:checked`);
                     if (selected) completed++;
-                } else {
-                    const answer = form.querySelector(`textarea[name="q${index}"]`).value.trim();
-                    if (answer) completed++;
+                } else if (q.type === 'drag_drop') {
+                    const dropZone = document.getElementById(`dropzone-${index}`);
+                    if (dropZone && dropZone.querySelector('.draggable-word')) completed++;
                 }
             });
             
@@ -1021,9 +1320,9 @@
                 if (q.type === 'multiple_choice') {
                     const selected = form.querySelector(`input[name="q${index}"]:checked`);
                     if (!selected) allAnswered = false;
-                } else {
-                    const answer = form.querySelector(`textarea[name="q${index}"]`).value.trim();
-                    if (!answer) allAnswered = false;
+                } else if (q.type === 'drag_drop') {
+                    const dropZone = document.getElementById(`dropzone-${index}`);
+                    if (!dropZone || !dropZone.querySelector('.draggable-word')) allAnswered = false;
                 }
             });
             
@@ -1032,10 +1331,8 @@
                 return;
             }
             
-            // Calcular resultados
             const results = calculateResults();
             
-            // Preparar datos para enviar a Google Sheets
             const dataToSend = {
                 timestamp: new Date().toLocaleString('es-MX', { timeZone: 'America/Monterrey' }),
                 studentName: studentName,
@@ -1048,29 +1345,27 @@
                 answers: []
             };
             
-            // Agregar todas las respuestas
             questions.forEach((q, index) => {
                 let userAnswer;
                 if (q.type === 'multiple_choice') {
                     const selected = form.querySelector(`input[name="q${index}"]:checked`);
                     userAnswer = selected ? selected.value : '';
-                } else {
-                    userAnswer = form.querySelector(`textarea[name="q${index}"]`).value.trim();
+                } else if (q.type === 'drag_drop') {
+                    const dropZone = document.getElementById(`dropzone-${index}`);
+                    const wordEl = dropZone ? dropZone.querySelector('.draggable-word') : null;
+                    userAnswer = wordEl ? wordEl.textContent : '';
                 }
                 
                 dataToSend.answers.push({
                     question: q.title,
                     userAnswer: userAnswer,
                     correctAnswer: q.correct,
-                    isCorrect: userAnswer.toLowerCase() === q.correct.toLowerCase(),
+                    isCorrect: userAnswer.toLowerCase().trim() === q.correct.toLowerCase().trim(),
                     points: q.points
                 });
             });
             
-            // Enviar a Google Sheets del grupo correspondiente
             await sendToGoogleSheets(dataToSend, group);
-            
-            // Mostrar resultados
             showResults(results.score, results.correct, results.incorrect);
         });
 
@@ -1078,10 +1373,9 @@
             const submitBtn = document.getElementById('submitBtn');
             const sendingAlert = document.getElementById('sendingAlert');
             
-            // Obtener la URL correspondiente al grupo
             const scriptURL = GOOGLE_SCRIPT_URLS[group];
             
-            if (!scriptURL || scriptURL === `URL_${group.replace(' ', '_').toUpperCase()}_AQUI`) {
+            if (!scriptURL || scriptURL.includes('URL_GRUPO')) {
                 console.error('URL no configurada para el grupo:', group);
                 alert('Error: La URL de Google Sheets no está configurada para tu grupo. Contacta al profesor.');
                 return;
@@ -1092,7 +1386,7 @@
                 submitBtn.innerHTML = '<span class="spinner"></span> Enviando...';
                 sendingAlert.classList.add('show');
                 
-                const response = await fetch(scriptURL, {
+                await fetch(scriptURL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: {
@@ -1136,11 +1430,13 @@
                 if (q.type === 'multiple_choice') {
                     const selected = form.querySelector(`input[name="q${index}"]:checked`);
                     userAnswer = selected ? selected.value : '';
-                } else {
-                    userAnswer = form.querySelector(`textarea[name="q${index}"]`).value.trim();
+                } else if (q.type === 'drag_drop') {
+                    const dropZone = document.getElementById(`dropzone-${index}`);
+                    const wordEl = dropZone ? dropZone.querySelector('.draggable-word') : null;
+                    userAnswer = wordEl ? wordEl.textContent : '';
                 }
                 
-                const isCorrect = userAnswer.toLowerCase() === q.correct.toLowerCase();
+                const isCorrect = userAnswer.toLowerCase().trim() === q.correct.toLowerCase().trim();
                 if (isCorrect) {
                     score += q.points;
                     correct++;
@@ -1204,7 +1500,6 @@
             document.getElementById('resultsModal').classList.remove('show');
         }
 
-        // Inicializar al cargar la página
         checkExamAccess();
     </script>
 </body>
