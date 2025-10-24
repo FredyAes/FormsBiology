@@ -858,7 +858,7 @@
         };
 
         // Configuración de fecha y hora (Zona horaria de Monterrey: America/Monterrey = UTC-6)
-        const EXAM_START = new Date('2025-10-24T00:11:00-06:00'); // 10:00 AM
+        const EXAM_START = new Date('2025-10-31T10:00:00-06:00'); // 10:00 AM
         const EXAM_END = new Date('2025-10-31T11:30:00-06:00');   // 11:30 AM
 
         const questions = [
@@ -1401,44 +1401,27 @@
             
             if (dropZone) {
                 const wordText = element.textContent;
-                const sourceIsBank = element.parentElement && element.parentElement.id === 'wordBank';
-                
-                // NO permitir arrastrar si no viene del banco
-                if (!sourceIsBank) {
-                    draggedElement = null;
-                    return;
-                }
+                const sourceIsBank = element.parentElement.id === 'wordBank';
                 
                 // Verificar si la palabra ya está siendo usada en OTRA zona
-                if (isWordUsed(wordText, dropZone.id)) {
+                if (sourceIsBank && isWordUsed(wordText, dropZone.id)) {
                     showError(dropZone.id);
                     draggedElement = null;
                     return;
                 }
                 
-                // Si la zona ya tiene una palabra, liberar la palabra anterior
+                // Si la zona ya tiene una palabra diferente, devolverla al banco
                 const existingWord = dropZone.querySelector('.draggable-word');
-                if (existingWord) {
-                    const existingWordText = existingWord.textContent;
+                if (existingWord && existingWord.textContent !== wordText) {
                     const wordBank = document.getElementById('wordBank');
-                    const originalWord = Array.from(wordBank.children).find(w => 
-                        w.textContent === existingWordText && 
-                        w.classList.contains('used') &&
-                        w.classList.contains('draggable-word')
-                    );
+                    const originalWord = Array.from(wordBank.children).find(w => w.textContent === existingWord.textContent && w.classList.contains('used'));
                     if (originalWord) {
                         originalWord.classList.remove('used');
                     }
                 }
                 
-                // Limpiar completamente la zona
-                dropZone.innerHTML = '';
-                
-                // Crear placeholder
-                const placeholder = document.createElement('span');
-                placeholder.className = 'drop-placeholder';
-                placeholder.textContent = 'Arrastra aquí la respuesta';
-                dropZone.appendChild(placeholder);
+                // Limpiar la zona
+                dropZone.innerHTML = '<span class="drop-placeholder">Arrastra aquí la respuesta</span>';
                 
                 // Crear nuevo elemento para la zona
                 const newWord = document.createElement('div');
@@ -1450,17 +1433,13 @@
                 // Click para devolver al banco
                 newWord.addEventListener('click', function() {
                     const wordBank = document.getElementById('wordBank');
-                    const originalWord = Array.from(wordBank.children).find(w => 
-                        w.textContent === this.textContent && 
-                        w.classList.contains('used') &&
-                        w.classList.contains('draggable-word')
-                    );
+                    const originalWord = Array.from(wordBank.children).find(w => w.textContent === this.textContent && w.classList.contains('used'));
                     if (originalWord) {
                         originalWord.classList.remove('used');
                     }
-                    this.remove();
-                    dropZone.classList.add('empty');
-                    dropZone.classList.remove('filled');
+                    this.parentElement.innerHTML = '<span class="drop-placeholder">Arrastra aquí la respuesta</span>';
+                    this.parentElement.classList.add('empty');
+                    this.parentElement.classList.remove('filled');
                     updateWordBankStatus();
                     updateProgress();
                 });
@@ -1470,7 +1449,9 @@
                 dropZone.classList.add('filled');
                 
                 // Marcar palabra en el banco como usada
-                element.classList.add('used');
+                if (sourceIsBank) {
+                    element.classList.add('used');
+                }
                 
                 updateWordBankStatus();
                 updateProgress();
