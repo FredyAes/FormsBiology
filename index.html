@@ -365,22 +365,37 @@
             margin-top: 20px;
         }
 
+        .word-bank-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 3px solid var(--secondary);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+        }
+
         .word-bank {
-            background: #f3f4f6;
+            background: var(--white);
             padding: 20px;
             border-radius: 10px;
-            margin-bottom: 20px;
-            border: 2px dashed var(--border);
+            border: 2px dashed var(--secondary);
         }
 
         .word-bank-title {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 15px;
-            font-size: 0.95em;
+            font-size: 1.1em;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        .word-bank-subtitle {
+            color: var(--text-light);
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            font-style: italic;
         }
 
         .word-options {
@@ -795,9 +810,8 @@
             'Grupo 8': 'https://script.google.com/macros/s/AKfycbyPUV2pF0anV-WwJ5asm-CC2k_wT4U8zWKT6mm9nSIH6XZfHyqPblvJSMJOQA7YdfHZ/exec',
             'Grupo 9': 'https://script.google.com/macros/s/AKfycbytXZqPhZ4hQe8Y492RARBjIxCe0zJxzc2jRMARQgNwmoS-0KwJskI7EUbVmqFqPe4r/exec'
         };
-
         // Configuración de fecha y hora (Zona horaria de Monterrey: America/Monterrey = UTC-6)
-        const EXAM_START = new Date('2025-10-23T11:40:00-06:00'); // 10:00 AM
+        const EXAM_START = new Date('2025-10-31T11:48:00-06:00'); // 10:00 AM
         const EXAM_END = new Date('2025-10-31T11:30:00-06:00');   // 11:30 AM
 
         const questions = [
