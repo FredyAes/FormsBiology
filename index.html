@@ -419,12 +419,12 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .draggable-word:hover {
+        .draggable-word:hover:not(.used) {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
-        .draggable-word:active {
+        .draggable-word:active:not(.used) {
             transform: scale(1.05);
             box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5);
             z-index: 1000;
@@ -434,6 +434,43 @@
             opacity: 0.5;
             transform: rotate(5deg) scale(1.1);
             cursor: grabbing;
+        }
+
+        .draggable-word.used {
+            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .drop-zone.error {
+            border-color: var(--danger);
+            background: #fee2e2;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85em;
+            margin-top: 8px;
+            display: none;
+            font-weight: 600;
+            animation: fadeIn 0.3s;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .drop-zone {
@@ -810,8 +847,9 @@
             'Grupo 8': 'https://script.google.com/macros/s/AKfycbyPUV2pF0anV-WwJ5asm-CC2k_wT4U8zWKT6mm9nSIH6XZfHyqPblvJSMJOQA7YdfHZ/exec',
             'Grupo 9': 'https://script.google.com/macros/s/AKfycbytXZqPhZ4hQe8Y492RARBjIxCe0zJxzc2jRMARQgNwmoS-0KwJskI7EUbVmqFqPe4r/exec'
         };
+
         // Configuración de fecha y hora (Zona horaria de Monterrey: America/Monterrey = UTC-6)
-        const EXAM_START = new Date('2025-10-23T11:48:00-06:00'); // 10:00 AM
+        const EXAM_START = new Date('2025-10-23T11:58:00-06:00'); // 10:00 AM
         const EXAM_END = new Date('2025-10-31T11:30:00-06:00');   // 11:30 AM
 
         const questions = [
@@ -1084,6 +1122,7 @@
                                 </div>
                             ` : ''}
                             <div class="drop-zone empty" data-question="${index}" id="dropzone-${index}"></div>
+                        <div class="error-message" id="error-${index}">⚠️ Esta palabra ya está siendo usada en otra pregunta</div>
                         </div>
                     `;
                 }
@@ -1147,8 +1186,54 @@
             document.getElementById('listNumber').addEventListener('input', updateProgress);
         }
 
-        // Funciones de Drag and Drop para escritorio
+        // Función para verificar si una palabra ya está siendo usada
+        function isWordUsed(word, excludeZoneId) {
+            const allZones = document.querySelectorAll('.drop-zone');
+            for (let zone of allZones) {
+                if (zone.id === excludeZoneId) continue;
+                const wordInZone = zone.querySelector('.draggable-word');
+                if (wordInZone && wordInZone.textContent === word) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Función para actualizar el estado de las palabras en el banco
+        function updateWordBankStatus() {
+            const wordBankContainer = document.getElementById('wordBank');
+            if (!wordBankContainer) return;
+            
+            const words = wordBankContainer.querySelectorAll('.draggable-word');
+            words.forEach(wordEl => {
+                if (isWordUsed(wordEl.textContent)) {
+                    wordEl.classList.add('used');
+                } else {
+                    wordEl.classList.remove('used');
+                }
+            });
+        }
+
+        // Función para mostrar error
+        function showError(zoneId) {
+            const zone = document.getElementById(zoneId);
+            const errorMsg = document.getElementById(`error-${zoneId.replace('dropzone-', '')}`);
+            
+            zone.classList.add('error');
+            errorMsg.classList.add('show');
+            
+            setTimeout(() => {
+                zone.classList.remove('error');
+                errorMsg.classList.remove('show');
+            }, 2000);
+        }
+
         function handleDragStart(e) {
+            // No permitir arrastrar si ya está siendo usada
+            if (this.classList.contains('used')) {
+                e.preventDefault();
+                return;
+            }
             draggedElement = this;
             this.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
@@ -1181,11 +1266,20 @@
             this.classList.remove('drag-over');
             
             if (draggedElement) {
+                const wordText = draggedElement.textContent;
+                
+                // Verificar si la palabra ya está siendo usada en otra zona
+                if (isWordUsed(wordText, this.id)) {
+                    showError(this.id);
+                    return false;
+                }
+                
                 // Si la zona ya tiene una palabra, devolverla al banco
                 const existingWord = this.querySelector('.draggable-word');
                 if (existingWord) {
                     const wordBank = document.getElementById('wordBank');
                     wordBank.appendChild(existingWord);
+                    existingWord.classList.remove('used');
                 }
                 
                 // Clonar el elemento arrastrado
@@ -1200,8 +1294,10 @@
                     // Devolver al banco al hacer clic
                     const wordBank = document.getElementById('wordBank');
                     wordBank.appendChild(this);
+                    this.classList.remove('used');
                     this.parentElement.classList.add('empty');
                     this.parentElement.classList.remove('filled');
+                    updateWordBankStatus();
                     updateProgress();
                 });
                 
@@ -1210,6 +1306,12 @@
                 this.classList.remove('empty');
                 this.classList.add('filled');
                 
+                // Si la palabra arrastrada estaba en el banco, marcarla como usada
+                if (draggedElement.parentElement.id === 'wordBank') {
+                    draggedElement.classList.add('used');
+                }
+                
+                updateWordBankStatus();
                 updateProgress();
             }
             
@@ -1218,6 +1320,10 @@
 
         // Funciones de Touch para móvil
         function handleTouchStart(e) {
+            // No permitir arrastrar si ya está siendo usada
+            if (this.classList.contains('used')) {
+                return;
+            }
             draggedElement = this;
             this.classList.add('dragging');
             
@@ -1229,7 +1335,7 @@
         function handleTouchMove(e) {
             e.preventDefault();
             
-            if (!draggedElement) return;
+            if (!draggedElement || draggedElement.classList.contains('used')) return;
             
             const touch = e.touches[0];
             const element = draggedElement;
@@ -1258,11 +1364,21 @@
             const dropZone = document.elementFromPoint(touch.clientX, touch.clientY)?.closest('.drop-zone');
             
             if (dropZone) {
+                const wordText = element.textContent;
+                
+                // Verificar si la palabra ya está siendo usada en otra zona
+                if (isWordUsed(wordText, dropZone.id)) {
+                    showError(dropZone.id);
+                    draggedElement = null;
+                    return;
+                }
+                
                 // Si la zona ya tiene una palabra, devolverla al banco
                 const existingWord = dropZone.querySelector('.draggable-word');
                 if (existingWord) {
                     const wordBank = document.getElementById('wordBank');
                     wordBank.appendChild(existingWord);
+                    existingWord.classList.remove('used');
                 }
                 
                 // Clonar el elemento
@@ -1276,8 +1392,10 @@
                 clone.addEventListener('click', function() {
                     const wordBank = document.getElementById('wordBank');
                     wordBank.appendChild(this);
+                    this.classList.remove('used');
                     this.parentElement.classList.add('empty');
                     this.parentElement.classList.remove('filled');
+                    updateWordBankStatus();
                     updateProgress();
                 });
                 
@@ -1286,6 +1404,12 @@
                 dropZone.classList.remove('empty');
                 dropZone.classList.add('filled');
                 
+                // Si la palabra arrastrada estaba en el banco, marcarla como usada
+                if (element.parentElement.id === 'wordBank') {
+                    element.classList.add('used');
+                }
+                
+                updateWordBankStatus();
                 updateProgress();
             }
             
