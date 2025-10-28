@@ -858,7 +858,7 @@
         };
 
         // Configuración de fecha y hora (Zona horaria de Monterrey: America/Monterrey = UTC-6)
-        const EXAM_START = new Date('2025-10-24T00:18:00-06:00'); // 10:00 AM
+        const EXAM_START = new Date('2025-10-27T22:00:00-06:00'); // 10:00 AM
         const EXAM_END = new Date('2025-10-31T11:30:00-06:00');   // 11:30 AM
 
         const questions = [
@@ -968,50 +968,43 @@
                 points: 5
             },
             {
-                type: 'drag_drop',
-                title: 'Son células bien definidas y estructuradas que carecen de pared celular y cloroplastos',
+                type: 'multiple_choice',
+                title: 'Son células bien definidas y estructuradas que carecen de pared celular y cloroplastos.',
+                options: ['Célula animal', 'Célula Vegetal', 'Abióticos', 'Bióticos'],
                 correct: 'Célula animal',
                 points: 5
             },
             {
-                type: 'drag_drop',
-                title: 'Las amibas y los microorganismos son ejemplo de',
-                correct: 'Organismos unicelulares',
+                type: 'multiple_choice',
+                title: 'Las amibas y los microorganismos son ejemplo de…',
+                options: ['Organismos Unicelulares', 'Organismos pluricelulares', 'Abióticos', 'Bióticos'],
+                correct: 'Organismos Unicelulares',
                 points: 5
             },
             {
-                type: 'drag_drop',
-                title: 'Organismos que poseen células de la sangre, de la piel, musculares, etc. son ejemplo de',
+                type: 'multiple_choice',
+                title: 'Organismos que poseen células de la sangre, de la piel, musculares, etc. son ejemplo de…',
+                options: ['Organismos Unicelulares', 'Organismos pluricelulares', 'Abióticos', 'Bióticos'],
                 correct: 'Organismos pluricelulares',
                 points: 5
             },
             {
-                type: 'drag_drop',
+                type: 'multiple_choice',
                 title: 'Emplean la luz solar para producir la fotosíntesis',
-                correct: 'Célula vegetal',
+                options: ['Célula animal', 'Célula Vegetal', 'Abióticos', 'Bióticos'],
+                correct: 'Célula Vegetal',
                 points: 5
             },
             {
-                type: 'drag_drop',
-                title: 'Las plantas, los animales, microorganismos, hongos, etc., forman parte de los factores',
+                type: 'multiple_choice',
+                title: 'Las plantas, los animales, microorganismos, hongos, etc., forman parte de los factores…',
+                options: ['Organismos Unicelulares', 'Organismos pluricelulares', 'Abióticos', 'Bióticos'],
                 correct: 'Bióticos',
                 points: 5
             }
         ];
 
-        // Banco de palabras para las preguntas de arrastrar y soltar
-        const wordBank = [
-            'Célula animal',
-            'Célula vegetal',
-            'Organismos unicelulares',
-            'Organismos pluricelulares',
-            'Bióticos',
-            'Abióticos',
-            'Fotosíntesis',
-            'Respiración celular'
-        ];
-
-        // Variables globales para drag and drop
+        // Variables globales para drag and drop (ya no se usan pero se mantienen para no romper código)
         let draggedElement = null;
         let touchStartX = 0;
         let touchStartY = 0;
@@ -1401,27 +1394,44 @@
             
             if (dropZone) {
                 const wordText = element.textContent;
-                const sourceIsBank = element.parentElement.id === 'wordBank';
+                const sourceIsBank = element.parentElement && element.parentElement.id === 'wordBank';
+                
+                // NO permitir arrastrar si no viene del banco
+                if (!sourceIsBank) {
+                    draggedElement = null;
+                    return;
+                }
                 
                 // Verificar si la palabra ya está siendo usada en OTRA zona
-                if (sourceIsBank && isWordUsed(wordText, dropZone.id)) {
+                if (isWordUsed(wordText, dropZone.id)) {
                     showError(dropZone.id);
                     draggedElement = null;
                     return;
                 }
                 
-                // Si la zona ya tiene una palabra diferente, devolverla al banco
+                // Si la zona ya tiene una palabra, liberar la palabra anterior
                 const existingWord = dropZone.querySelector('.draggable-word');
-                if (existingWord && existingWord.textContent !== wordText) {
+                if (existingWord) {
+                    const existingWordText = existingWord.textContent;
                     const wordBank = document.getElementById('wordBank');
-                    const originalWord = Array.from(wordBank.children).find(w => w.textContent === existingWord.textContent && w.classList.contains('used'));
+                    const originalWord = Array.from(wordBank.children).find(w => 
+                        w.textContent === existingWordText && 
+                        w.classList.contains('used') &&
+                        w.classList.contains('draggable-word')
+                    );
                     if (originalWord) {
                         originalWord.classList.remove('used');
                     }
                 }
                 
-                // Limpiar la zona
-                dropZone.innerHTML = '<span class="drop-placeholder">Arrastra aquí la respuesta</span>';
+                // Limpiar completamente la zona
+                dropZone.innerHTML = '';
+                
+                // Crear placeholder
+                const placeholder = document.createElement('span');
+                placeholder.className = 'drop-placeholder';
+                placeholder.textContent = 'Arrastra aquí la respuesta';
+                dropZone.appendChild(placeholder);
                 
                 // Crear nuevo elemento para la zona
                 const newWord = document.createElement('div');
@@ -1433,13 +1443,17 @@
                 // Click para devolver al banco
                 newWord.addEventListener('click', function() {
                     const wordBank = document.getElementById('wordBank');
-                    const originalWord = Array.from(wordBank.children).find(w => w.textContent === this.textContent && w.classList.contains('used'));
+                    const originalWord = Array.from(wordBank.children).find(w => 
+                        w.textContent === this.textContent && 
+                        w.classList.contains('used') &&
+                        w.classList.contains('draggable-word')
+                    );
                     if (originalWord) {
                         originalWord.classList.remove('used');
                     }
-                    this.parentElement.innerHTML = '<span class="drop-placeholder">Arrastra aquí la respuesta</span>';
-                    this.parentElement.classList.add('empty');
-                    this.parentElement.classList.remove('filled');
+                    this.remove();
+                    dropZone.classList.add('empty');
+                    dropZone.classList.remove('filled');
                     updateWordBankStatus();
                     updateProgress();
                 });
@@ -1449,9 +1463,7 @@
                 dropZone.classList.add('filled');
                 
                 // Marcar palabra en el banco como usada
-                if (sourceIsBank) {
-                    element.classList.add('used');
-                }
+                element.classList.add('used');
                 
                 updateWordBankStatus();
                 updateProgress();
