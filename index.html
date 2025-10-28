@@ -26,30 +26,46 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
             line-height: 1.6;
-            touch-action: pan-y;
+            touch-action: pan-y pinch-zoom;
+            -webkit-text-size-adjust: 100%;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
             background: var(--white);
-            border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .container {
+                border-radius: 20px;
+            }
         }
 
         .header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: var(--white);
-            padding: 40px;
+            padding: 30px 20px;
             text-align: center;
             position: relative;
             overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .header {
+                padding: 40px;
+            }
         }
 
         .header::before {
@@ -69,99 +85,196 @@
         }
 
         .header h1 {
-            font-size: 2.2em;
+            font-size: 1.5em;
             margin-bottom: 10px;
             position: relative;
             z-index: 1;
         }
 
         .header p {
-            font-size: 1.1em;
+            font-size: 1em;
             opacity: 0.95;
             position: relative;
             z-index: 1;
         }
 
+        @media (min-width: 768px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            .header p {
+                font-size: 1.1em;
+            }
+        }
+
         .icon {
-            font-size: 3em;
+            font-size: 2.5em;
             margin-bottom: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .icon {
+                font-size: 3em;
+            }
         }
 
         .access-denied {
             text-align: center;
-            padding: 60px 40px;
+            padding: 40px 20px;
+        }
+
+        @media (min-width: 768px) {
+            .access-denied {
+                padding: 60px 40px;
+            }
         }
 
         .access-denied-icon {
-            font-size: 5em;
+            font-size: 3.5em;
             margin-bottom: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .access-denied-icon {
+                font-size: 5em;
+            }
         }
 
         .access-denied h2 {
             color: var(--text-dark);
             margin-bottom: 15px;
-            font-size: 1.8em;
+            font-size: 1.5em;
+        }
+
+        @media (min-width: 768px) {
+            .access-denied h2 {
+                font-size: 1.8em;
+            }
         }
 
         .access-denied p {
             color: var(--text-light);
-            font-size: 1.1em;
+            font-size: 1em;
             margin-bottom: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .access-denied p {
+                font-size: 1.1em;
+            }
         }
 
         .countdown {
             background: var(--bg-light);
-            padding: 30px;
+            padding: 20px;
             border-radius: 15px;
             margin-top: 30px;
             display: inline-block;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        @media (min-width: 768px) {
+            .countdown {
+                padding: 30px;
+            }
         }
 
         .countdown-title {
             font-weight: 600;
             color: var(--text-dark);
             margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        @media (min-width: 768px) {
+            .countdown-title {
+                font-size: 1em;
+            }
         }
 
         .countdown-timer {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @media (min-width: 768px) {
+            .countdown-timer {
+                gap: 20px;
+            }
         }
 
         .countdown-item {
             text-align: center;
+            min-width: 60px;
         }
 
         .countdown-value {
-            font-size: 2.5em;
+            font-size: 2em;
             font-weight: bold;
             color: var(--primary);
             display: block;
         }
 
+        @media (min-width: 768px) {
+            .countdown-value {
+                font-size: 2.5em;
+            }
+        }
+
         .countdown-label {
-            font-size: 0.9em;
+            font-size: 0.8em;
             color: var(--text-light);
             text-transform: uppercase;
         }
 
+        @media (min-width: 768px) {
+            .countdown-label {
+                font-size: 0.9em;
+            }
+        }
+
         .progress-bar {
             background: var(--bg-light);
-            padding: 20px 40px;
+            padding: 15px 20px;
             border-bottom: 2px solid var(--border);
+        }
+
+        @media (min-width: 768px) {
+            .progress-bar {
+                padding: 20px 40px;
+            }
         }
 
         .progress-container {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .progress-container {
+                flex-direction: row;
+                gap: 15px;
+            }
         }
 
         .progress-label {
             font-weight: 600;
             color: var(--text-dark);
-            min-width: 120px;
+            width: 100%;
+            text-align: left;
+        }
+
+        @media (min-width: 768px) {
+            .progress-label {
+                min-width: 120px;
+                width: auto;
+            }
         }
 
         .progress {
@@ -205,28 +318,53 @@
         }
 
         .form-content {
-            padding: 40px;
+            padding: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .form-content {
+                padding: 40px;
+            }
         }
 
         .student-info {
             background: var(--bg-light);
-            padding: 30px;
+            padding: 20px;
             border-radius: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             border-left: 5px solid var(--primary);
+        }
+
+        @media (min-width: 768px) {
+            .student-info {
+                padding: 30px;
+                margin-bottom: 30px;
+            }
         }
 
         .student-info h2 {
             color: var(--text-dark);
             margin-bottom: 20px;
-            font-size: 1.5em;
+            font-size: 1.3em;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
+        @media (min-width: 768px) {
+            .student-info h2 {
+                font-size: 1.5em;
+            }
+        }
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .form-group {
+                margin-bottom: 20px;
+            }
         }
 
         .form-group label {
@@ -240,12 +378,22 @@
         .form-group input[type="text"],
         .form-group select {
             width: 100%;
-            padding: 12px 15px;
+            padding: 14px 15px;
             border: 2px solid var(--border);
             border-radius: 8px;
-            font-size: 1em;
+            font-size: 16px;
             transition: all 0.3s ease;
             font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        @media (min-width: 768px) {
+            .form-group input[type="text"],
+            .form-group select {
+                padding: 12px 15px;
+                font-size: 1em;
+            }
         }
 
         .form-group input[type="text"]:focus,
@@ -264,52 +412,88 @@
             background: var(--white);
             border: 2px solid var(--border);
             border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
+            padding: 20px;
+            margin-bottom: 20px;
             transition: all 0.3s ease;
         }
 
-        .question-card:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
+        @media (min-width: 768px) {
+            .question-card {
+                padding: 25px;
+                margin-bottom: 25px;
+            }
+            
+            .question-card:hover {
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+                transform: translateY(-2px);
+            }
         }
 
         .question-header {
             display: flex;
             align-items: start;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        @media (min-width: 768px) {
+            .question-header {
+                gap: 15px;
+                margin-bottom: 20px;
+            }
         }
 
         .question-number {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: var(--white);
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             flex-shrink: 0;
-            font-size: 1.1em;
+            font-size: 1em;
+        }
+
+        @media (min-width: 768px) {
+            .question-number {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1em;
+            }
         }
 
         .question-title {
             flex: 1;
             font-weight: 600;
             color: var(--text-dark);
-            font-size: 1.05em;
+            font-size: 0.98em;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .question-title {
+                font-size: 1.05em;
+            }
         }
 
         .question-points {
             background: var(--warning);
             color: var(--white);
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.85em;
+            font-size: 0.8em;
             font-weight: 600;
             flex-shrink: 0;
+        }
+
+        @media (min-width: 768px) {
+            .question-points {
+                padding: 5px 12px;
+                font-size: 0.85em;
+            }
         }
 
         .options {
@@ -321,14 +505,27 @@
         .option-label {
             display: flex;
             align-items: center;
-            padding: 15px;
+            padding: 14px;
             border: 2px solid var(--border);
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             background: var(--white);
             user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: rgba(16, 185, 129, 0.1);
+            min-height: 50px;
+        }
+
+        @media (min-width: 768px) {
+            .option-label {
+                padding: 15px;
+            }
+            
+            .option-label:hover {
+                border-color: var(--primary);
+                background: var(--bg-light);
+                transform: translateX(5px);
+            }
         }
 
         .option-label:active {
@@ -336,18 +533,20 @@
             background: var(--bg-light);
         }
 
-        .option-label:hover {
-            border-color: var(--primary);
-            background: var(--bg-light);
-            transform: translateX(5px);
-        }
-
         .option-label input[type="radio"] {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             margin-right: 12px;
             cursor: pointer;
             accent-color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 768px) {
+            .option-label input[type="radio"] {
+                width: 20px;
+                height: 20px;
+            }
         }
 
         .option-label input[type="radio"]:checked + span {
@@ -358,6 +557,17 @@
         .option-label.selected {
             border-color: var(--primary);
             background: var(--bg-light);
+        }
+
+        .option-label span {
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        @media (min-width: 768px) {
+            .option-label span {
+                font-size: 1em;
+            }
         }
 
         /* Estilos para preguntas de arrastrar y soltar */
@@ -520,15 +730,21 @@
 
         .submit-section {
             text-align: center;
-            padding: 30px 0;
+            padding: 25px 0;
             border-top: 2px solid var(--border);
             margin-top: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .submit-section {
+                padding: 30px 0;
+            }
         }
 
         .submit-btn {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: var(--white);
-            padding: 15px 50px;
+            padding: 16px 40px;
             border: none;
             border-radius: 10px;
             font-size: 1.1em;
@@ -537,15 +753,24 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
             -webkit-tap-highlight-color: transparent;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .submit-btn {
+                width: auto;
+                padding: 15px 50px;
+            }
+            
+            .submit-btn:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            }
         }
 
         .submit-btn:active {
             transform: scale(0.98);
-        }
-
-        .submit-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
         }
 
         .submit-btn:disabled {
@@ -565,7 +790,64 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow-y: auto;
         }
+
+        .results-modal.show {
+            display: flex;
+        }
+
+        .results-content {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (min-width: 768px) {
+            .results-content {
+                padding: 40px;
+            }
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        @media (min-width: 768px) {
+            .results-header {
+                margin-bottom: 30px;
+            }
+        }
+
+        .results-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        @media (min-width: 768px) {
+            .results-icon {
+                font-size: 4em;
+            }
+        }
+
+        .results-score {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 15px 0;
+        }
+
+        @media (min-width: 768px) {
+            .results-score {
+                font-size: 3em;
+                margin: 20px 0;
+            }
 
         .results-modal.show {
             display: flex;
@@ -598,12 +880,20 @@
             color: var(--primary);
             margin: 20px 0;
         }
+        }
 
         .results-details {
             background: var(--bg-light);
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            margin: 20px 0;
+            margin: 15px 0;
+        }
+
+        @media (min-width: 768px) {
+            .results-details {
+                padding: 20px;
+                margin: 20px 0;
+            }
         }
 
         .detail-row {
@@ -611,6 +901,14 @@
             justify-content: space-between;
             padding: 10px 0;
             border-bottom: 1px solid var(--border);
+            font-size: 0.95em;
+            gap: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .detail-row {
+                font-size: 1em;
+            }
         }
 
         .detail-row:last-child {
@@ -620,14 +918,26 @@
         .close-btn {
             background: var(--text-light);
             color: var(--white);
-            padding: 12px 30px;
+            padding: 14px 30px;
             border: none;
             border-radius: 8px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 15px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (min-width: 768px) {
+            .close-btn {
+                padding: 12px 30px;
+                margin-top: 20px;
+            }
+        }
+
+        .close-btn:active {
+            transform: scale(0.98);
         }
 
         @media (max-width: 768px) {
@@ -858,8 +1168,79 @@
         };
 
         // Configuración de fecha y hora (Zona horaria de Monterrey: America/Monterrey = UTC-6)
-        const EXAM_START = new Date('2025-10-27T22:00:00-06:00'); // 10:00 AM
+        const EXAM_START = new Date('2025-10-27T10:00:00-06:00'); // 10:00 AM
         const EXAM_END = new Date('2025-10-31T11:30:00-06:00');   // 11:30 AM
+
+        // SEGURIDAD: Prevenir inspección del código
+        (function() {
+            // Deshabilitar click derecho
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+
+            // Deshabilitar teclas de desarrollador
+            document.addEventListener('keydown', function(e) {
+                // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+Shift+C
+                if (e.keyCode === 123 || 
+                    (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
+                    (e.ctrlKey && e.shiftKey && e.keyCode === 74) ||
+                    (e.ctrlKey && e.keyCode === 85) ||
+                    (e.ctrlKey && e.shiftKey && e.keyCode === 67)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Detectar si DevTools está abierto
+            const devToolsDetector = () => {
+                const threshold = 160;
+                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                
+                if (widthThreshold || heightThreshold) {
+                    document.body.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100vh; font-size: 2em; color: #ef4444; text-align: center; padding: 20px;">⚠️ Herramientas de desarrollador detectadas.<br>Por favor, cierra las herramientas de desarrollador para continuar.</div>';
+                }
+            };
+
+            setInterval(devToolsDetector, 1000);
+
+            // Prevenir selección de texto
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+
+            // Prevenir copiar
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
+                return false;
+            });
+        })();
+
+        // SEGURIDAD: Hash para validación de integridad
+        const EXAM_HASH = btoa(JSON.stringify(questions).substring(0, 50));
+
+        // SEGURIDAD: Generar token único por sesión
+        const SESSION_TOKEN = btoa(Date.now() + Math.random().toString(36));
+
+        // SEGURIDAD: Limitar intentos de envío
+        let submitAttempts = 0;
+        const MAX_SUBMIT_ATTEMPTS = 3;
+
+        // SEGURIDAD: Detectar manipulación de tiempo
+        let lastTimestamp = Date.now();
+        setInterval(() => {
+            const currentTime = Date.now();
+            const timeDiff = currentTime - lastTimestamp;
+            
+            // Si el tiempo ha retrocedido o avanzado más de 5 segundos
+            if (timeDiff < 0 || timeDiff > 5000) {
+                alert('⚠️ Se ha detectado manipulación del tiempo del sistema. El examen se cerrará.');
+                window.location.reload();
+            }
+            lastTimestamp = currentTime;
+        }, 1000);
 
         const questions = [
             {
@@ -1482,13 +1863,8 @@
             if (form.listNumber.value) completed++;
             
             questions.forEach((q, index) => {
-                if (q.type === 'multiple_choice') {
-                    const selected = form.querySelector(`input[name="q${index}"]:checked`);
-                    if (selected) completed++;
-                } else if (q.type === 'drag_drop') {
-                    const dropZone = document.getElementById(`dropzone-${index}`);
-                    if (dropZone && dropZone.querySelector('.draggable-word')) completed++;
-                }
+                const selected = form.querySelector(`input[name="q${index}"]:checked`);
+                if (selected) completed++;
             });
             
             const percentage = Math.round((completed / totalFields) * 100);
@@ -1499,34 +1875,60 @@
         document.getElementById('examForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // SEGURIDAD: Verificar intentos de envío
+            submitAttempts++;
+            if (submitAttempts > MAX_SUBMIT_ATTEMPTS) {
+                alert('⚠️ Has excedido el número máximo de intentos de envío. Contacta al profesor.');
+                return;
+            }
+            
             const form = this;
             const studentName = form.studentName.value.trim();
             const group = form.group.value;
             const listNumber = form.listNumber.value.trim();
             
+            // SEGURIDAD: Validación de datos
             if (!studentName || !group || !listNumber) {
                 showAlert('warning', 'Por favor, completa todos los campos antes de enviar.');
+                return;
+            }
+
+            // SEGURIDAD: Validar formato de nombre (solo letras y espacios)
+            const nameRegex = /^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]{3,100}$/;
+            if (!nameRegex.test(studentName)) {
+                showAlert('warning', 'El nombre debe contener solo letras y tener entre 3 y 100 caracteres.');
+                return;
+            }
+
+            // SEGURIDAD: Validar número de lista (solo números)
+            const listRegex = /^[0-9]{1,3}$/;
+            if (!listRegex.test(listNumber)) {
+                showAlert('warning', 'El número de lista debe ser un número válido entre 1 y 999.');
                 return;
             }
             
             let allAnswered = true;
             questions.forEach((q, index) => {
-                if (q.type === 'multiple_choice') {
-                    const selected = form.querySelector(`input[name="q${index}"]:checked`);
-                    if (!selected) allAnswered = false;
-                } else if (q.type === 'drag_drop') {
-                    const dropZone = document.getElementById(`dropzone-${index}`);
-                    if (!dropZone || !dropZone.querySelector('.draggable-word')) allAnswered = false;
-                }
+                const selected = form.querySelector(`input[name="q${index}"]:checked`);
+                if (!selected) allAnswered = false;
             });
             
             if (!allAnswered) {
                 showAlert('warning', 'Por favor, responde todas las preguntas antes de enviar.');
                 return;
             }
+
+            // SEGURIDAD: Verificar que estamos dentro del horario del examen
+            const now = new Date();
+            if (now < EXAM_START || now > EXAM_END) {
+                alert('⚠️ El examen no está disponible en este momento.');
+                window.location.reload();
+                return;
+            }
             
             const results = calculateResults();
             
+            // SEGURIDAD: Agregar información de validación
             const dataToSend = {
                 timestamp: new Date().toLocaleString('es-MX', { timeZone: 'America/Monterrey' }),
                 studentName: studentName,
@@ -1536,19 +1938,15 @@
                 correct: results.correct,
                 incorrect: results.incorrect,
                 percentage: results.score,
+                sessionToken: SESSION_TOKEN,
+                examHash: EXAM_HASH,
+                userAgent: navigator.userAgent.substring(0, 100),
                 answers: []
             };
             
             questions.forEach((q, index) => {
-                let userAnswer;
-                if (q.type === 'multiple_choice') {
-                    const selected = form.querySelector(`input[name="q${index}"]:checked`);
-                    userAnswer = selected ? selected.value : '';
-                } else if (q.type === 'drag_drop') {
-                    const dropZone = document.getElementById(`dropzone-${index}`);
-                    const wordEl = dropZone ? dropZone.querySelector('.draggable-word') : null;
-                    userAnswer = wordEl ? wordEl.textContent : '';
-                }
+                const selected = form.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selected ? selected.value : '';
                 
                 dataToSend.answers.push({
                     question: q.title,
@@ -1560,6 +1958,10 @@
             });
             
             await sendToGoogleSheets(dataToSend, group);
+            
+            // SEGURIDAD: Deshabilitar el formulario después de enviar
+            form.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+            
             showResults(results.score, results.correct, results.incorrect);
         });
 
@@ -1620,15 +2022,8 @@
             let incorrect = 0;
             
             questions.forEach((q, index) => {
-                let userAnswer;
-                if (q.type === 'multiple_choice') {
-                    const selected = form.querySelector(`input[name="q${index}"]:checked`);
-                    userAnswer = selected ? selected.value : '';
-                } else if (q.type === 'drag_drop') {
-                    const dropZone = document.getElementById(`dropzone-${index}`);
-                    const wordEl = dropZone ? dropZone.querySelector('.draggable-word') : null;
-                    userAnswer = wordEl ? wordEl.textContent : '';
-                }
+                const selected = form.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selected ? selected.value : '';
                 
                 const isCorrect = userAnswer.toLowerCase().trim() === q.correct.toLowerCase().trim();
                 if (isCorrect) {
