@@ -1171,76 +1171,11 @@
         const EXAM_START = new Date('2025-10-27T10:00:00-06:00'); // 10:00 AM
         const EXAM_END = new Date('2025-10-31T11:30:00-06:00');   // 11:30 AM
 
-        // SEGURIDAD: Prevenir inspección del código
-        (function() {
-            // Deshabilitar click derecho
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
-            });
+        // Modo abierto: se eliminan bloqueos de herramientas de desarrollador y restricciones ajenas a validaciones de datos.
 
-            // Deshabilitar teclas de desarrollador
-            document.addEventListener('keydown', function(e) {
-                // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+Shift+C
-                if (e.keyCode === 123 || 
-                    (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
-                    (e.ctrlKey && e.shiftKey && e.keyCode === 74) ||
-                    (e.ctrlKey && e.keyCode === 85) ||
-                    (e.ctrlKey && e.shiftKey && e.keyCode === 67)) {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-
-            // Detectar si DevTools está abierto
-            const devToolsDetector = () => {
-                const threshold = 160;
-                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-                
-                if (widthThreshold || heightThreshold) {
-                    document.body.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100vh; font-size: 2em; color: #ef4444; text-align: center; padding: 20px;">⚠️ Herramientas de desarrollador detectadas.<br>Por favor, cierra las herramientas de desarrollador para continuar.</div>';
-                }
-            };
-
-            setInterval(devToolsDetector, 1000);
-
-            // Prevenir selección de texto
-            document.addEventListener('selectstart', function(e) {
-                e.preventDefault();
-                return false;
-            });
-
-            // Prevenir copiar
-            document.addEventListener('copy', function(e) {
-                e.preventDefault();
-                return false;
-            });
-        })();
-
-        // SEGURIDAD: Hash para validación de integridad
-        const EXAM_HASH = btoa(JSON.stringify(questions).substring(0, 50));
-
-        // SEGURIDAD: Generar token único por sesión
-        const SESSION_TOKEN = btoa(Date.now() + Math.random().toString(36));
-
-        // SEGURIDAD: Limitar intentos de envío
+        // Solo variables necesarias para flujo normal
         let submitAttempts = 0;
         const MAX_SUBMIT_ATTEMPTS = 3;
-
-        // SEGURIDAD: Detectar manipulación de tiempo
-        let lastTimestamp = Date.now();
-        setInterval(() => {
-            const currentTime = Date.now();
-            const timeDiff = currentTime - lastTimestamp;
-            
-            // Si el tiempo ha retrocedido o avanzado más de 5 segundos
-            if (timeDiff < 0 || timeDiff > 5000) {
-                alert('⚠️ Se ha detectado manipulación del tiempo del sistema. El examen se cerrará.');
-                window.location.reload();
-            }
-            lastTimestamp = currentTime;
-        }, 1000);
 
         const questions = [
             {
@@ -1392,27 +1327,11 @@
 
         // Verificar acceso al examen
         function checkExamAccess() {
-            const now = new Date();
-            
-            if (now < EXAM_START) {
-                document.getElementById('accessDenied').style.display = 'block';
-                document.getElementById('examContent').style.display = 'none';
-                startCountdown();
-                return false;
-            } else if (now > EXAM_END) {
-                document.getElementById('accessDenied').style.display = 'block';
-                document.getElementById('examContent').style.display = 'none';
-                document.querySelector('.access-denied h2').textContent = 'Examen finalizado';
-                document.querySelector('.access-denied p:nth-child(3)').textContent = 'El tiempo para realizar el examen ha terminado.';
-                document.querySelector('.countdown').style.display = 'none';
-                return false;
-            } else {
-                document.getElementById('accessDenied').style.display = 'none';
-                document.getElementById('examContent').style.display = 'block';
-                startExamTimer();
-                initializeQuestions();
-                return true;
-            }
+            // Modo abierto: mostrar siempre el examen y las preguntas
+            document.getElementById('accessDenied').style.display = 'none';
+            document.getElementById('examContent').style.display = 'block';
+            initializeQuestions();
+            return true;
         }
 
         function startCountdown() {
@@ -1918,13 +1837,7 @@
                 return;
             }
 
-            // SEGURIDAD: Verificar que estamos dentro del horario del examen
-            const now = new Date();
-            if (now < EXAM_START || now > EXAM_END) {
-                alert('⚠️ El examen no está disponible en este momento.');
-                window.location.reload();
-                return;
-            }
+            // Modo abierto: sin restricción por horario; se mantienen solo validaciones de datos.
             
             const results = calculateResults();
             
@@ -1938,8 +1851,7 @@
                 correct: results.correct,
                 incorrect: results.incorrect,
                 percentage: results.score,
-                sessionToken: SESSION_TOKEN,
-                examHash: EXAM_HASH,
+                // Modo abierto: se omiten token de sesión y hash de integridad
                 userAgent: navigator.userAgent.substring(0, 100),
                 answers: []
             };
