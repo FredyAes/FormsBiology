@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biología – Segundo Parcial Trimestre I</title>
     <style>
         * {
@@ -29,11 +29,10 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom)) env(safe-area-inset-left);
+            padding: 0;
             line-height: 1.6;
             touch-action: pan-y pinch-zoom;
             -webkit-text-size-adjust: 100%;
-            color: var(--text-dark);
         }
 
         .container {
@@ -42,11 +41,6 @@
             background: var(--white);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-        }
-        
-        /* Mobile-first refinements */
-        .container, .form-content {
-            scroll-behavior: smooth;
         }
 
         @media (min-width: 768px) {
@@ -62,13 +56,10 @@
         .header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: var(--white);
-            padding: 14px 16px;
+            padding: 30px 20px;
             text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 20;
+            position: relative;
             overflow: hidden;
-            backdrop-filter: saturate(120%) blur(6px);
         }
 
         @media (min-width: 768px) {
@@ -248,11 +239,8 @@
 
         .progress-bar {
             background: var(--bg-light);
-            padding: 10px 16px;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 64px;
-            z-index: 15;
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--border);
         }
 
         @media (min-width: 768px) {
@@ -517,21 +505,15 @@
         .option-label {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 16px;
+            padding: 14px;
             border: 2px solid var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             background: var(--white);
             user-select: none;
             -webkit-tap-highlight-color: rgba(16, 185, 129, 0.1);
-            min-height: 56px;
-        }
-        .option-label:focus-within {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+            min-height: 50px;
         }
 
         @media (min-width: 768px) {
@@ -747,14 +729,10 @@
         }
 
         .submit-section {
-            position: sticky;
-            bottom: 0;
-            background: var(--white);
             text-align: center;
-            padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-            border-top: 1px solid var(--border);
-            margin-top: 12px;
-            z-index: 10;
+            padding: 25px 0;
+            border-top: 2px solid var(--border);
+            margin-top: 20px;
         }
 
         @media (min-width: 768px) {
@@ -766,18 +744,17 @@
         .submit-btn {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: var(--white);
-            padding: 16px 20px;
+            padding: 16px 40px;
             border: none;
-            border-radius: 12px;
-            font-size: 1.05em;
-            font-weight: 700;
-            letter-spacing: 0.2px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.2s ease;
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
             -webkit-tap-highlight-color: transparent;
             width: 100%;
-            max-width: 560px;
+            max-width: 400px;
         }
 
         @media (min-width: 768px) {
@@ -822,9 +799,10 @@
 
         .results-content {
             background: var(--white);
-            border-radius: 16px;
-            padding: 20px 16px;
-            width: min(640px, 100%);
+            border-radius: 20px;
+            padding: 30px 20px;
+            max-width: 600px;
+            width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -870,6 +848,7 @@
                 font-size: 3em;
                 margin: 20px 0;
             }
+        }
 
         .results-modal.show {
             display: flex;
@@ -901,7 +880,6 @@
             font-weight: bold;
             color: var(--primary);
             margin: 20px 0;
-        }
         }
 
         .results-details {
@@ -960,6 +938,180 @@
 
         .close-btn:active {
             transform: scale(0.98);
+        }
+
+        /* Vista de agradecimiento */
+        .thank-you-screen {
+            display: none;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .thank-you-screen.show {
+            display: flex;
+        }
+
+        .thank-you-content {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .thank-you-content {
+                padding: 60px 50px;
+            }
+        }
+
+        .thank-you-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @media (min-width: 768px) {
+            .thank-you-icon {
+                font-size: 6em;
+            }
+        }
+
+        .thank-you-content h2 {
+            color: var(--text-dark);
+            font-size: 2em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        @media (min-width: 768px) {
+            .thank-you-content h2 {
+                font-size: 2.5em;
+            }
+        }
+
+        .thank-you-content p {
+            color: var(--text-light);
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        @media (min-width: 768px) {
+            .thank-you-content p {
+                font-size: 1.2em;
+            }
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #d1fae5 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border: 3px solid var(--primary);
+        }
+
+        @media (min-width: 768px) {
+            .score-display {
+                padding: 30px;
+            }
+        }
+
+        .score-label {
+            color: var(--text-dark);
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        @media (min-width: 768px) {
+            .score-value {
+                font-size: 3.5em;
+            }
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        @media (min-width: 768px) {
+            .info-box {
+                padding: 25px;
+            }
+        }
+
+        .info-box h3 {
+            color: var(--text-dark);
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            color: var(--text-light);
+            padding: 8px 0;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .info-box li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.2em;
         }
 
         @media (max-width: 768px) {
@@ -1021,12 +1173,22 @@
         }
 
         .alert {
-            padding: 15px 20px;
+            padding: 12px 15px;
             border-radius: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: none;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            font-size: 0.95em;
+        }
+
+        @media (min-width: 768px) {
+            .alert {
+                padding: 15px 20px;
+                margin-bottom: 20px;
+                gap: 10px;
+                font-size: 1em;
+            }
         }
 
         .alert.show {
@@ -1080,9 +1242,9 @@
 <body>
     <div class="container" id="mainContainer">
         <div class="header">
-            <div class="icon" aria-hidden="true">🧬</div>
-            <h1 style="font-size: 1.1rem; line-height: 1.2;">Biología – Segundo Parcial</h1>
-            <p style="opacity: .95; font-size: .9rem;">Trimestre I</p>
+            <div class="icon">🧬</div>
+            <h1>Biología – Segundo Parcial</h1>
+            <p>Trimestre I</p>
         </div>
 
         <div class="access-denied" id="accessDenied" style="display: none;">
@@ -1125,16 +1287,16 @@
                     <span>Enviando respuestas a Google Sheets...</span>
                 </div>
 
-                <form id="examForm" novalidate>
+                <form id="examForm">
                     <div class="student-info">
                         <h2>📋 Información del Alumno</h2>
                         <div class="form-group">
                             <label for="studentName">Nombre completo:</label>
-                            <input type="text" id="studentName" name="studentName" required inputmode="text" autocomplete="name" placeholder="Nombre y apellidos">
+                            <input type="text" id="studentName" name="studentName" required>
                         </div>
                         <div class="form-group">
                             <label for="group">Grupo:</label>
-                            <select id="group" name="group" required aria-label="Selecciona tu grupo">
+                            <select id="group" name="group" required>
                                 <option value="">Selecciona tu grupo</option>
                                 <option value="Grupo 1">Grupo 1</option>
                                 <option value="Grupo 2">Grupo 2</option>
@@ -1149,15 +1311,14 @@
                         </div>
                         <div class="form-group">
                             <label for="listNumber">Número de lista:</label>
-                            <input type="text" id="listNumber" name="listNumber" required inputmode="numeric" pattern="[0-9]*" placeholder="Ej. 12">
+                            <input type="text" id="listNumber" name="listNumber" required>
                         </div>
                     </div>
 
-                    <div id="questionsContainer" role="list"></div>
+                    <div id="questionsContainer"></div>
 
                     <div class="submit-section">
-                        <button type="submit" class="submit-btn" id="submitBtn" aria-label="Enviar examen">📤 Enviar Examen</button>
-                        <div style="margin-top:8px; font-size:.85rem; color: var(--text-light);">Revisa tus respuestas antes de enviar</div>
+                        <button type="submit" class="submit-btn" id="submitBtn">📤 Enviar Examen</button>
                     </div>
                 </form>
             </div>
@@ -1169,10 +1330,43 @@
             <div class="results-header">
                 <div class="results-icon" id="resultsIcon">🎉</div>
                 <h2>¡Examen Completado!</h2>
-                <div class="results-score" id="resultsScore" aria-live="polite">0/100</div>
+                <div class="results-score" id="resultsScore">0/100</div>
             </div>
             <div class="results-details" id="resultsDetails"></div>
-            <button class="close-btn" onclick="closeResults()">Cerrar</button>
+            <button class="close-btn" onclick="closeResults()">Ver mensaje de confirmación</button>
+        </div>
+    </div>
+
+    <!-- Vista de Agradecimiento -->
+    <div class="thank-you-screen" id="thankYouScreen">
+        <div class="thank-you-content">
+            <div class="thank-you-icon">🎓</div>
+            <h2>¡Examen Enviado Exitosamente!</h2>
+            <p>Gracias por completar el examen de Biología</p>
+            
+            <div class="success-message">
+                <span>✓</span>
+                <span>Tus respuestas han sido guardadas correctamente</span>
+            </div>
+            
+            <div class="score-display">
+                <div class="score-label">Tu calificación</div>
+                <div class="score-value" id="finalScore">0/100</div>
+            </div>
+            
+            <div class="info-box">
+                <h3>📋 Información importante</h3>
+                <ul>
+                    <li>Tu examen ha sido registrado exitosamente</li>
+                    <li>Los resultados serán revisados por tu profesor</li>
+                    <li>Recibirás la retroalimentación en clase</li>
+                    <li>Conserva esta calificación como referencia</li>
+                </ul>
+            </div>
+            
+            <p style="margin-top: 30px; color: var(--text-light); font-size: 0.95em;">
+                Puedes cerrar esta ventana de forma segura
+            </p>
         </div>
     </div>
 
@@ -1191,14 +1385,8 @@
         };
 
         // Configuración de fecha y hora (Zona horaria de Monterrey: America/Monterrey = UTC-6)
-        const EXAM_START = new Date('2025-10-27T10:00:00-06:00'); // 10:00 AM
+        const EXAM_START = new Date('2025-10-28T10:00:00-06:00'); // 10:00 AM
         const EXAM_END = new Date('2025-10-31T11:30:00-06:00');   // 11:30 AM
-
-        // Modo abierto: se eliminan bloqueos de herramientas de desarrollador y restricciones ajenas a validaciones de datos.
-
-        // Solo variables necesarias para flujo normal
-        let submitAttempts = 0;
-        const MAX_SUBMIT_ATTEMPTS = 3;
 
         const questions = [
             {
@@ -1343,6 +1531,30 @@
             }
         ];
 
+        // SEGURIDAD: Hash para validación de integridad
+        const EXAM_HASH = btoa(JSON.stringify(questions).substring(0, 50));
+
+        // SEGURIDAD: Generar token único por sesión
+        const SESSION_TOKEN = btoa(Date.now() + Math.random().toString(36));
+
+        // SEGURIDAD: Limitar intentos de envío
+        let submitAttempts = 0;
+        const MAX_SUBMIT_ATTEMPTS = 3;
+
+        // SEGURIDAD: Detectar manipulación de tiempo
+        let lastTimestamp = Date.now();
+        setInterval(() => {
+            const currentTime = Date.now();
+            const timeDiff = currentTime - lastTimestamp;
+            
+            // Si el tiempo ha retrocedido o avanzado más de 5 segundos
+            if (timeDiff < 0 || timeDiff > 5000) {
+                alert('⚠️ Se ha detectado manipulación del tiempo del sistema. El examen se cerrará.');
+                window.location.reload();
+            }
+            lastTimestamp = currentTime;
+        }, 1000);
+
         // Variables globales para drag and drop (ya no se usan pero se mantienen para no romper código)
         let draggedElement = null;
         let touchStartX = 0;
@@ -1350,13 +1562,27 @@
 
         // Verificar acceso al examen
         function checkExamAccess() {
-            // Modo abierto: mostrar siempre el examen y las preguntas
-            document.getElementById('accessDenied').style.display = 'none';
-            document.getElementById('examContent').style.display = 'block';
-            initializeQuestions();
-            // Iniciar el temporizador de 30 minutos al ingresar
-            startExamTimer();
-            return true;
+            const now = new Date();
+            
+            if (now < EXAM_START) {
+                document.getElementById('accessDenied').style.display = 'block';
+                document.getElementById('examContent').style.display = 'none';
+                startCountdown();
+                return false;
+            } else if (now > EXAM_END) {
+                document.getElementById('accessDenied').style.display = 'block';
+                document.getElementById('examContent').style.display = 'none';
+                document.querySelector('.access-denied h2').textContent = 'Examen finalizado';
+                document.querySelector('.access-denied p:nth-child(3)').textContent = 'El tiempo para realizar el examen ha terminado.';
+                document.querySelector('.countdown').style.display = 'none';
+                return false;
+            } else {
+                document.getElementById('accessDenied').style.display = 'none';
+                document.getElementById('examContent').style.display = 'block';
+                startExamTimer();
+                initializeQuestions();
+                return true;
+            }
         }
 
         function startCountdown() {
@@ -1388,81 +1614,35 @@
             setInterval(updateCountdown, 1000);
         }
 
-        // Temporizador de examen: 30 minutos desde que el alumno abre/ingresa a la página
-        // Persistimos en localStorage para evitar que recargar reinicie el tiempo
         function startExamTimer() {
             const timeWarning = document.getElementById('timeWarning');
             const timeRemainingEl = document.getElementById('timeRemaining');
-
-            // Duración fija de 30 minutos (en ms)
-            const DURATION_MS = 30 * 60 * 1000;
-
-            // Obtener o inicializar hora de inicio
-            const STORAGE_KEY = 'exam_start_time_v1';
-            let startTime = localStorage.getItem(STORAGE_KEY);
-            if (!startTime) {
-                startTime = Date.now();
-                localStorage.setItem(STORAGE_KEY, String(startTime));
-            } else {
-                startTime = Number(startTime);
-            }
-            const endTime = startTime + DURATION_MS;
-
+            
             timeWarning.style.display = 'flex';
-
-            let timerId = null;
-
-            function finalizeExamDueTime() {
-                // Deshabilitar formulario y tratar de enviar automáticamente
-                try {
-                    const form = document.getElementById('examForm');
-                    form.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
-                } catch {}
-                // Intento de auto-envío si todo está completo; de lo contrario, solo mostrar resultados parciales
-                try {
-                    const form = document.getElementById('examForm');
-                    const requiredOk = form.studentName.value.trim() && form.group.value && form.listNumber.value.trim();
-                    // Verificar si todas las preguntas están respondidas
-                    let allAnswered = true;
-                    questions.forEach((q, index) => {
-                        const selected = form.querySelector(`input[name="q${index}"]:checked`);
-                        if (!selected) allAnswered = false;
-                    });
-
-                    if (requiredOk && allAnswered) {
-                        form.requestSubmit ? form.requestSubmit() : form.submit();
-                    } else {
-                        const results = calculateResults();
-                        showResults(results.score, results.correct, results.incorrect);
-                    }
-                } catch {}
-            }
-
+            
             function updateTimer() {
-                const now = Date.now();
-                const diff = endTime - now;
-
+                const now = new Date();
+                const diff = EXAM_END - now;
+                
                 if (diff <= 0) {
-                    timeRemainingEl.textContent = '00:00';
-                    clearInterval(timerId);
-                    finalizeExamDueTime();
+                    alert('El tiempo del examen ha terminado. La página se recargará.');
+                    location.reload();
                     return;
                 }
-
+                
                 const minutes = Math.floor(diff / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-                timeRemainingEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-                // Cambiar estilo cuando queden < 10 minutos
+                
+                timeRemainingEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
                 if (minutes < 10) {
                     timeWarning.style.background = '#fee2e2';
                     timeWarning.style.borderColor = '#ef4444';
                 }
             }
-
+            
             updateTimer();
-            timerId = setInterval(updateTimer, 1000);
+            setInterval(updateTimer, 1000);
         }
 
         function initializeQuestions() {
@@ -1477,10 +1657,9 @@
                 if (q.type === 'multiple_choice') {
                     optionsHTML = '<div class="options">';
                     q.options.forEach(opt => {
-                        const id = `q${index}-${opt.replace(/[^a-z0-9]/gi,'').toLowerCase()}`;
                         optionsHTML += `
-                            <label class="option-label" for="${id}">
-                                <input id="${id}" type="radio" name="q${index}" value="${opt}" onchange="updateProgress()" style="flex-shrink:0;">
+                            <label class="option-label">
+                                <input type="radio" name="q${index}" value="${opt}" onchange="updateProgress()">
                                 <span>${opt}</span>
                             </label>
                         `;
@@ -1503,9 +1682,9 @@
                 
                 card.innerHTML = `
                     <div class="question-header">
-                        <div class="question-number" aria-hidden="true">${index + 1}</div>
+                        <div class="question-number">${index + 1}</div>
                         <div class="question-title">${q.title}</div>
-                        <div class="question-points" title="Puntos">${q.points} pts</div>
+                        <div class="question-points">${q.points} pts</div>
                     </div>
                     ${optionsHTML}
                 `;
@@ -1909,7 +2088,13 @@
                 return;
             }
 
-            // Modo abierto: sin restricción por horario; se mantienen solo validaciones de datos.
+            // SEGURIDAD: Verificar que estamos dentro del horario del examen
+            const now = new Date();
+            if (now < EXAM_START || now > EXAM_END) {
+                alert('⚠️ El examen no está disponible en este momento.');
+                window.location.reload();
+                return;
+            }
             
             const results = calculateResults();
             
@@ -1923,7 +2108,8 @@
                 correct: results.correct,
                 incorrect: results.incorrect,
                 percentage: results.score,
-                // Modo abierto: se omiten token de sesión y hash de integridad
+                sessionToken: SESSION_TOKEN,
+                examHash: EXAM_HASH,
                 userAgent: navigator.userAgent.substring(0, 100),
                 answers: []
             };
@@ -1966,24 +2152,13 @@
                 submitBtn.innerHTML = '<span class="spinner"></span> Enviando...';
                 sendingAlert.classList.add('show');
                 
-                // Enviar como FormData para evitar truncamientos de JSON con no-cors
-                const fd = new FormData();
-                fd.append('timestamp', data.timestamp);
-                fd.append('studentName', data.studentName);
-                fd.append('group', data.group);
-                fd.append('listNumber', data.listNumber);
-                fd.append('score', String(data.score));
-                fd.append('correct', String(data.correct));
-                fd.append('incorrect', String(data.incorrect));
-                fd.append('percentage', String(data.percentage));
-                fd.append('userAgent', data.userAgent);
-                // Serializamos todas las respuestas como un solo campo
-                fd.append('answers', JSON.stringify(data.answers));
-                
                 await fetch(scriptURL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    body: fd
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
                 });
                 
                 console.log('Datos enviados exitosamente a Google Sheets del', group);
@@ -2050,8 +2225,7 @@
                 icon.textContent = '📚';
             }
             
-            // Resumen
-            let html = `
+            detailsEl.innerHTML = `
                 <div class="detail-row">
                     <strong>Calificación:</strong>
                     <span>${score} puntos</span>
@@ -2078,47 +2252,29 @@
                 </div>
             `;
             
-            // Lista compacta de confirmación de todas las preguntas
-            html += '<div style="margin-top:10px; font-weight:600;">Resumen de respuestas:</div>';
-            html += '<ul style="margin-top:8px; padding-left:18px;">';
-            const form = document.getElementById('examForm');
-            questions.forEach((q, index) => {
-                const selected = form.querySelector(`input[name="q${index}"]:checked`);
-                const ans = selected ? selected.value : '(sin respuesta)';
-                html += `<li>Pregunta ${index + 1}: ${ans}</li>`;
-            });
-            html += '</ul>';
-            
-            detailsEl.innerHTML = html;
-            
             modal.classList.add('show');
-
-            // Después de mostrar el modal por unos segundos, mostrar pantalla de agradecimiento
-            setTimeout(showThankYouView, 2000);
         }
 
         function closeResults() {
-            document.getElementById('resultsModal').classList.remove('show');
-        }
-
-        // Pantalla final de agradecimiento
-        function showThankYouView() {
-            const container = document.getElementById('mainContainer');
-            container.innerHTML = `
-                <div class="header">
-                    <div class="icon" aria-hidden="true">✅</div>
-                    <h1 style="font-size: 1.1rem; line-height: 1.2;">¡Gracias por contestar!</h1>
-                    <p style="opacity: .95; font-size: .9rem;">Tu examen ha sido enviado con éxito</p>
-                </div>
-                <div style="padding: 30px; display:flex; justify-content:center;">
-                    <div style="max-width:700px; width:100%; background: var(--white); border: 2px solid var(--border); border-radius: 16px; padding: 30px; text-align:center; box-shadow: 0 12px 30px rgba(0,0,0,.15);">
-                        <div style="font-size: 54px;">🎓</div>
-                        <h2 style="margin-top: 10px; color: var(--text-dark);">Hemos registrado tus respuestas</h2>
-                        <p style="margin-top: 10px; color: var(--text-light);">Puedes cerrar esta página. Te deseamos mucho éxito.</p>
-                        <button onclick="window.close();" style="margin-top: 18px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color:#fff; border:none; border-radius:10px; padding: 12px 24px; font-weight:700; cursor:pointer;">Cerrar</button>
-                    </div>
-                </div>
-            `;
+            const modal = document.getElementById('resultsModal');
+            const thankYouScreen = document.getElementById('thankYouScreen');
+            const mainContainer = document.getElementById('mainContainer');
+            const scoreText = document.getElementById('resultsScore').textContent;
+            
+            // Ocultar modal de resultados
+            modal.classList.remove('show');
+            
+            // Ocultar contenedor principal del examen
+            mainContainer.style.display = 'none';
+            
+            // Mostrar pantalla de agradecimiento
+            thankYouScreen.classList.add('show');
+            
+            // Actualizar calificación en pantalla de agradecimiento
+            document.getElementById('finalScore').textContent = scoreText;
+            
+            // Scroll al inicio
+            window.scrollTo(0, 0);
         }
 
         checkExamAccess();
