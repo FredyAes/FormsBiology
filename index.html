@@ -1966,13 +1966,24 @@
                 submitBtn.innerHTML = '<span class="spinner"></span> Enviando...';
                 sendingAlert.classList.add('show');
                 
+                // Enviar como FormData para evitar truncamientos de JSON con no-cors
+                const fd = new FormData();
+                fd.append('timestamp', data.timestamp);
+                fd.append('studentName', data.studentName);
+                fd.append('group', data.group);
+                fd.append('listNumber', data.listNumber);
+                fd.append('score', String(data.score));
+                fd.append('correct', String(data.correct));
+                fd.append('incorrect', String(data.incorrect));
+                fd.append('percentage', String(data.percentage));
+                fd.append('userAgent', data.userAgent);
+                // Serializamos todas las respuestas como un solo campo
+                fd.append('answers', JSON.stringify(data.answers));
+                
                 await fetch(scriptURL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
+                    body: fd
                 });
                 
                 console.log('Datos enviados exitosamente a Google Sheets del', group);
@@ -2039,7 +2050,8 @@
                 icon.textContent = '📚';
             }
             
-            detailsEl.innerHTML = `
+            // Resumen
+            let html = `
                 <div class="detail-row">
                     <strong>Calificación:</strong>
                     <span>${score} puntos</span>
@@ -2066,11 +2078,47 @@
                 </div>
             `;
             
+            // Lista compacta de confirmación de todas las preguntas
+            html += '<div style="margin-top:10px; font-weight:600;">Resumen de respuestas:</div>';
+            html += '<ul style="margin-top:8px; padding-left:18px;">';
+            const form = document.getElementById('examForm');
+            questions.forEach((q, index) => {
+                const selected = form.querySelector(`input[name="q${index}"]:checked`);
+                const ans = selected ? selected.value : '(sin respuesta)';
+                html += `<li>Pregunta ${index + 1}: ${ans}</li>`;
+            });
+            html += '</ul>';
+            
+            detailsEl.innerHTML = html;
+            
             modal.classList.add('show');
+
+            // Después de mostrar el modal por unos segundos, mostrar pantalla de agradecimiento
+            setTimeout(showThankYouView, 2000);
         }
 
         function closeResults() {
             document.getElementById('resultsModal').classList.remove('show');
+        }
+
+        // Pantalla final de agradecimiento
+        function showThankYouView() {
+            const container = document.getElementById('mainContainer');
+            container.innerHTML = `
+                <div class="header">
+                    <div class="icon" aria-hidden="true">✅</div>
+                    <h1 style="font-size: 1.1rem; line-height: 1.2;">¡Gracias por contestar!</h1>
+                    <p style="opacity: .95; font-size: .9rem;">Tu examen ha sido enviado con éxito</p>
+                </div>
+                <div style="padding: 30px; display:flex; justify-content:center;">
+                    <div style="max-width:700px; width:100%; background: var(--white); border: 2px solid var(--border); border-radius: 16px; padding: 30px; text-align:center; box-shadow: 0 12px 30px rgba(0,0,0,.15);">
+                        <div style="font-size: 54px;">🎓</div>
+                        <h2 style="margin-top: 10px; color: var(--text-dark);">Hemos registrado tus respuestas</h2>
+                        <p style="margin-top: 10px; color: var(--text-light);">Puedes cerrar esta página. Te deseamos mucho éxito.</p>
+                        <button onclick="window.close();" style="margin-top: 18px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color:#fff; border:none; border-radius:10px; padding: 12px 24px; font-weight:700; cursor:pointer;">Cerrar</button>
+                    </div>
+                </div>
+            `;
         }
 
         checkExamAccess();
