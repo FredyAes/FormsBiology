@@ -1354,6 +1354,8 @@
             document.getElementById('accessDenied').style.display = 'none';
             document.getElementById('examContent').style.display = 'block';
             initializeQuestions();
+            // Iniciar el temporizador de 30 minutos al ingresar
+            startExamTimer();
             return true;
         }
 
@@ -1386,35 +1388,81 @@
             setInterval(updateCountdown, 1000);
         }
 
+        // Temporizador de examen: 30 minutos desde que el alumno abre/ingresa a la página
+        // Persistimos en localStorage para evitar que recargar reinicie el tiempo
         function startExamTimer() {
             const timeWarning = document.getElementById('timeWarning');
             const timeRemainingEl = document.getElementById('timeRemaining');
-            
+
+            // Duración fija de 30 minutos (en ms)
+            const DURATION_MS = 30 * 60 * 1000;
+
+            // Obtener o inicializar hora de inicio
+            const STORAGE_KEY = 'exam_start_time_v1';
+            let startTime = localStorage.getItem(STORAGE_KEY);
+            if (!startTime) {
+                startTime = Date.now();
+                localStorage.setItem(STORAGE_KEY, String(startTime));
+            } else {
+                startTime = Number(startTime);
+            }
+            const endTime = startTime + DURATION_MS;
+
             timeWarning.style.display = 'flex';
-            
+
+            let timerId = null;
+
+            function finalizeExamDueTime() {
+                // Deshabilitar formulario y tratar de enviar automáticamente
+                try {
+                    const form = document.getElementById('examForm');
+                    form.querySelectorAll('input, select, button').forEach(el => el.disabled = true);
+                } catch {}
+                // Intento de auto-envío si todo está completo; de lo contrario, solo mostrar resultados parciales
+                try {
+                    const form = document.getElementById('examForm');
+                    const requiredOk = form.studentName.value.trim() && form.group.value && form.listNumber.value.trim();
+                    // Verificar si todas las preguntas están respondidas
+                    let allAnswered = true;
+                    questions.forEach((q, index) => {
+                        const selected = form.querySelector(`input[name="q${index}"]:checked`);
+                        if (!selected) allAnswered = false;
+                    });
+
+                    if (requiredOk && allAnswered) {
+                        form.requestSubmit ? form.requestSubmit() : form.submit();
+                    } else {
+                        const results = calculateResults();
+                        showResults(results.score, results.correct, results.incorrect);
+                    }
+                } catch {}
+            }
+
             function updateTimer() {
-                const now = new Date();
-                const diff = EXAM_END - now;
-                
+                const now = Date.now();
+                const diff = endTime - now;
+
                 if (diff <= 0) {
-                    alert('El tiempo del examen ha terminado. La página se recargará.');
-                    location.reload();
+                    timeRemainingEl.textContent = '00:00';
+                    clearInterval(timerId);
+                    finalizeExamDueTime();
                     return;
                 }
-                
+
                 const minutes = Math.floor(diff / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                timeRemainingEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
+
+                timeRemainingEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                // Cambiar estilo cuando queden < 10 minutos
                 if (minutes < 10) {
                     timeWarning.style.background = '#fee2e2';
                     timeWarning.style.borderColor = '#ef4444';
                 }
             }
-            
+
             updateTimer();
-            setInterval(updateTimer, 1000);
+            timerId = setInterval(updateTimer, 1000);
         }
 
         function initializeQuestions() {
