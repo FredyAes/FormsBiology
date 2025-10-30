@@ -848,6 +848,16 @@
                 font-size: 3em;
                 margin: 20px 0;
             }
+        }position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         .results-modal.show {
@@ -1252,7 +1262,7 @@
             <h2>Examen no disponible</h2>
             <p><strong>El examen estará disponible:</strong></p>
             <p>📅 31 de Octubre de 2025</p>
-            <p>⏰ 10:00 AM - 11:15 AM (Hora de Monterrey)</p>
+            <p>⏰ 10:00 AM - 11:30 AM (Hora de Monterrey)</p>
             
             <div class="countdown">
                 <div class="countdown-title">Tiempo restante para iniciar:</div>
@@ -1383,10 +1393,9 @@
             'Grupo 8': 'https://script.google.com/macros/s/AKfycbyPUV2pF0anV-WwJ5asm-CC2k_wT4U8zWKT6mm9nSIH6XZfHyqPblvJSMJOQA7YdfHZ/exec',
             'Grupo 9': 'https://script.google.com/macros/s/AKfycbytXZqPhZ4hQe8Y492RARBjIxCe0zJxzc2jRMARQgNwmoS-0KwJskI7EUbVmqFqPe4r/exec'
         };
-
         // Configuración de fecha y hora (Zona horaria de Monterrey: America/Monterrey = UTC-6)
-        const EXAM_START = new Date('2025-10-31T10:00:00-06:00'); 
-        const EXAM_END = new Date('2025-10-31T11:15:00-06:00');   
+        const EXAM_START = new Date('2025-10-31T10:00:00-06:00'); // 10:00 AM
+        const EXAM_END = new Date('2025-10-31T11:30:00-06:00');   // 11:30 AM
 
         const questions = [
             {
@@ -1540,20 +1549,6 @@
         // SEGURIDAD: Limitar intentos de envío
         let submitAttempts = 0;
         const MAX_SUBMIT_ATTEMPTS = 3;
-
-        // SEGURIDAD: Detectar manipulación de tiempo
-        let lastTimestamp = Date.now();
-        setInterval(() => {
-            const currentTime = Date.now();
-            const timeDiff = currentTime - lastTimestamp;
-            
-            // Si el tiempo ha retrocedido o avanzado más de 5 segundos
-            if (timeDiff < 0 || timeDiff > 5000) {
-                alert('⚠️ Se ha detectado manipulación del tiempo del sistema. El examen se cerrará.');
-                window.location.reload();
-            }
-            lastTimestamp = currentTime;
-        }, 1000);
 
         // Variables globales para drag and drop (ya no se usan pero se mantienen para no romper código)
         let draggedElement = null;
